@@ -24,23 +24,24 @@ function getUUID(user,password){
 		'user': user,
 		'password': password,
 		'appid': '34cc6df78cfa7cd457284e4fc377559e'
-		}, 
-		function(data, textStatus, xhr) {
-			if(xhr.status==200){
+	}, function(data, textStatus, xhr) {
 				uuid=data;
 				console.log(uuid);
-			}
+	})
+	.error(function(data, textStatus, xhr) {
+	
 	});
 
 }
 
+//检查uuid是否合法
 function checkUUIDPost(){
 	$.post('http://www.heraldstudio.com/uc/check',{
 		'uuid':uuid,
 		'appid': '34cc6df78cfa7cd457284e4fc377559e'
 	},function(data,textStatus,xhr){
 		console.log(data);
-	})
+	});
 }
 
 
@@ -49,14 +50,13 @@ function logoutPost(){
 	$.post('http://www.heraldstudio.com/uc/deauth', {
 		'uuid':uuid
 	}, function(data, textStatus, xhr) {
-		if(xhr.status==200){
-			console.log(data);
-			if(data=='OK'){
+		console.log(data);
+		if(data=='OK'){
 				
-			}
-		}else{
-		
 		}
+	})
+	.error(function(data,textStatus,xhr) {
+	
 	});
 }
 
@@ -65,9 +65,11 @@ function getSrtpPost(){
 	$.post('http://www.heraldstudio.com/api/srtp', {
 		uuid: uuid
 	}, function(data, textStatus, xhr) {
-		if(xhr.status==200){
-			console.log( 'srtp'+data );
-		}
+		console.log( 'srtp'+data );
+		dealSrtpReturn(data);
+	})
+	.error(function(data, textStatus, xhr) {
+		
 	});
 }
 
@@ -76,9 +78,11 @@ function getTermPost(){
 	$.post('http://www.heraldstudio.com/api/term', {
 		'uuid': uuid
 	}, function(data, textStatus, xhr) {
-		if(xhr.status == 200){
-			console.log('学期列表/n'+data)
-		}
+		console.log('学期列表/n'+data);
+		
+	})
+	.error(function(data, textStatus, xhr) {
+	
 	});
 }
 
@@ -87,9 +91,11 @@ function getCoursePost(){
 	$.post('http://www.heraldstudio.com/api/sidebar', {
 		uuid: uuid
 	}, function(data, textStatus, xhr) {
-		if(xhr.status == 200){
-			console.log('课程查询/n/r'+data);
-		}
+		console.log('课程查询/n/r'+data);
+		
+	})
+	.error(function(data, textStatus, xhr) {
+	
 	});
 }
 
@@ -98,9 +104,11 @@ function getCurriculumPost(){
 	$.post('http://www.heraldstudio.com/api/curriculum', {
 		uuid: uuid}, 
 	function(data, textStatus, xhr) {
-		if(xhr.status==200){
-			console.log('课程表查询'+data);
-		}	
+		console.log('课程表查询'+data);
+		dealCurriculumReturn(data);
+	})
+	.error(function(data, textStatus, xhr) {
+		
 	});
 }
 
@@ -108,11 +116,12 @@ function getCurriculumPost(){
 function getGPAPost(){
 	$.post('http://www.heraldstudio.com/api/gpa', {
 		uuid: uuid
-	}, 
-		function(data, textStatus, xhr) {
-		if(xhr.status==200){
-			console.log('GPA'+data);
-		}
+	}, function(data, textStatus, xhr) {
+		console.log('GPA'+data);
+		dealGPAReturn(data);
+	})
+	.error(function(data, textStatus, xhr) {
+		
 	});
 }
 
@@ -121,24 +130,25 @@ function getPePost(){
 	$.post('http://www.heraldstudio.com/api/pe', {
 		uuid: uuid
 	}, function(data, textStatus, xhr) {
-		if(xhr.status==200){
-			console.log('跑操/n'+data);
-		}
+		console.log('跑操/n'+data);
+		dealPeReturn(data);
+	})
+	.error(function(data, textStatus, xhr) {
+	
 	});
 }
 
-//跑操详细查询
-
-//体侧信息
 
 //人文讲座查询
 function getLecturePost(){
 	$.post('http://www.heraldstudio.com/api/lecture', {
 		uuid: uuid
 	}, function(data, textStatus, xhr) {
-		if(xhr.status==200){
-			console.log('人文讲座/n'+data);
-		}
+		console.log('人文讲座/n'+data);
+		dealLectureReturn(data);
+	})
+	.error(function(data, textStatus, xhr) {
+	
 	});
 }
 
@@ -147,9 +157,11 @@ function getLectureNoticePost(){
 	$.post('http://www.heraldstudio.com/wechat2/lecture', {
 
 	}, function(data, textStatus, xhr) {
-			if(xhr.status==200){
-				console.log('人文讲座预告/n'+data);
-			}
+		console.log('人文讲座预告/n'+data);
+		dealLectureNoticeReturn(data);
+	})
+	.error(function(data, textStatus, xhr) {
+
 	});
 }
 
@@ -158,9 +170,11 @@ function getCardPost(){
 	$.post('http://www.heraldstudio.com/api/card', {
 		uuid: uuid
 	}, function(data, textStatus, xhr) {
-		if(xhr.status==200){
-			console.log('一卡通余额/n'+data);
-		}
+		console.log('一卡通余额/n'+data);
+		dealCardReturn();
+	})
+	.error(function(data, textStatus, xhr) {
+		
 	});
 }
 
@@ -169,9 +183,11 @@ function getNicPost(){
 	$.post('http://www.heraldstudio.com/api/nic', {
 		uuid: uuid
 	}, function(data, textStatus, xhr) {
-		if(xhr.status==200){
-			console.log('校园网/n'+data);
-		}
+		console.log('校园网/n'+data);
+		dealNicReturn();
+	})
+	.error(function(data, textStatus, xhr) {
+		
 	});
 }
 
@@ -180,9 +196,12 @@ function getLibraryPost(){
 	$.post('http://www.heraldstudio.com/api/library', {
 		uuid: 'uuid'
 	}, function(data, textStatus, xhr) {
-		if(xhr.status==200){
-			console.log('图书馆借阅查询/n'+data);
-		}
+		console.log('图书馆借阅查询/n'+data);
+		dealLibraryReturn(data);
+		
+	})
+	.error(function(data, textStatus, xhr) {
+		
 	});
 }
 
@@ -191,9 +210,10 @@ function renewBookPost(barcode){
 	$.post('http://www.heraldstudio.com/api/renew', {
 		barcode: barcode
 	}, function(data, textStatus, xhr) {
-		if(xhr.status==200){
 
-		}
+	})
+	.error(function(data, textStatus, xhr) {
+	
 	});
 }
 
@@ -202,17 +222,11 @@ function getJwcInfoPost(){
 	$.post('http://www.heraldstudio.com/ap/jwc', {
 		'uuid': uuid
 	}, function(data, textStatus, xhr) {
-		
-		console.log(xhr);
-
-		if(xhr.status==200){
-			console.log('教务处信息/n/r'+data);
-		}else{
-			
-		}
+		console.log('教务处信息/n/r'+data);
+		dealJwcInfoReturn(data);
 	})
-	.error(function(xhr){
-			console.log('获取教务处信息失败');
+	.error(function(data, textStatus, xhr){
+		console.log('获取教务处信息失败');
 	});
 }
 
@@ -221,7 +235,10 @@ function getExamPost(){
 	$.post('http://www.heraldstudio.com/api/exam', {
 		'uuid': uuid
 	}, function(data, textStatus, xhr) {
-			console.log('考试安排'+data);
+		console.log('考试安排'+data);
+		dealExamReturn(data);
+	})
+	.error(function(data, textStatus, xhr) {
 	
 	});
 }
@@ -231,9 +248,11 @@ function getTicePost(){
 	$.post('http://www.heraldstudio.com/api/tice', {
 		'uuid': uuid
 	}, function(data, textStatus, xhr) {
-		if(xhr.status==200){
-			console.log('体侧/n'+data)
-		}
+		console.log('体侧/n'+data);
+		dealTiceReturn(data);
+	})
+	.error(function(data, textStatus, xhr) {
+	
 	});
 }
 
@@ -242,14 +261,13 @@ function connectSeuWlanPost(username,password){
 
 	$.post('http://w.seu.edu.cn/index.php/index/login', {
 		'username': username,
-		'password':base64encode(password),
+		'password': base64encode(password),
 		'enablemacauth': '0'
 	}, function(data, textStatus, xhr) {
-		if(xhr.status==200){
-			console.log(data);
-		}else{
-			//提示检查网络状态
-		}
+		console.log(data);
+
+	})
+	.error(function(data, textStatus, xhr) {
 		
 	});
 }
@@ -260,5 +278,8 @@ function disconnectSeuWlanPost(){
 
 	}, function(data, textStatus, xhr) {
 		console.log(data);
+	})
+	.error(function(data, textStatus, xhr) {
+		
 	});
 }
