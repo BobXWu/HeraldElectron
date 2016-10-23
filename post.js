@@ -1,5 +1,5 @@
 var uuid;
-getUUID('213141166','wuxiaobao69');
+getUUID('213141166','');
 
 function test(){
 	//getSrtpPost();//checked
@@ -253,6 +253,17 @@ function getTicePost(){
 	})
 	.error(function(data, textStatus, xhr) {
 	
+	});
+}
+
+//获取个人信息
+function getUserInfoPost(){
+	$.post('http://www.heraldstudio.com/api/user', {
+
+	}, function(data, textStatus, xhr) {
+		console.log("个人信息"+data);	
+	})
+	.error(function() {
 	});
 }
 
