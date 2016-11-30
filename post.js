@@ -1,6 +1,7 @@
 var uuid;
 getUUID('213141166','');
 
+//单元测试函数
 function test(){
 	//getSrtpPost();//checked
 	//getTermPost();//checked
