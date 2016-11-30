@@ -1,6 +1,7 @@
 var uuid;
 getUUID('213141166','');
 
+
 function test(){
 	//getSrtpPost();//checked
 	//getTermPost();//checked
@@ -34,6 +35,7 @@ function getUUID(user,password){
 
 }
 
+//检查uuid是否合法
 //检查uuid是否合法
 function checkUUIDPost(){
 	$.post('http://www.heraldstudio.com/uc/check',{
