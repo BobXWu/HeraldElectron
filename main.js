@@ -3,14 +3,31 @@ const electron = require('electron')
 const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
+const ipc = electron.ipcMain;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let loginWindow //登录窗口
+let mainWindow  //主窗口
+let pageWindow   //浏览其他web页面的窗口
 
-function createWindow () {
+function createLoginWindow(){
+  loginWindow = new BrowserWindow({width: 300, height: 500, show: false})
+  loginWindow.loadURL(`file://${__dirname}/html/login.html`)
+  loginWindow.webContents.openDevTools()
+
+  loginWindow.on('closed', function(){
+    loginWindow = null
+  })
+
+  loginWindow.once('ready-to-show', function(){
+    loginWindow.show()
+  })
+}
+
+function createMainWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600, frame: false})
+  mainWindow = new BrowserWindow({width: 800, height: 600, frame: true, show:true})
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/html/index.html`)
@@ -25,12 +42,31 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  mainWindow.once('ready-to-show', function(){
+    mainWindow.webContents.send('stopLoadingGif')
+  })
+
+}
+
+function createPageWindow(){
+  pageWindow = new BrowserWindow({width: 800, height: 600, parent: mainWindow, modal: true, show: true})
+  // pageWindow.loadURL(`file://${__dirname}/html/login.html`)
+  pageWindow.loadURL('https://github.com')
+  pageWindow.on('closed', function(){
+    pageWindow = null
+  })
+
+  pageWindow.once('ready-to-show', function(){
+    pageWindow.webContents.send('stopLoadingGif')//通知web页面关闭加载动画
+  })
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', createMainWindow)
+// app.on('ready', createLoginWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -45,9 +81,27 @@ app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
-    createWindow()
+    createMainWindow()
   }
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+//关闭登录窗口并打开主窗口
+ipc.on('closeLoginWindow', function(){
+  loginWindow.close()
+  createMainWindow()
+})
+
+//关闭web浏览页面
+ipc.on('closePageWindow', function(){
+   pageWindow.close()
+})
+
+//关闭主窗口
+ipc.on('closeMainWindow', function(){
+  mainWindow.close()
+})
+
+//打开新web浏览页面
+ipc.on('createPageWindow', function(){
+  createPageWindow()
+})
