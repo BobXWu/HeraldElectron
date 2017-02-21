@@ -1,4 +1,50 @@
-.toolbar{
-	background-color: #02aeff;
-	height: 30px;
+body, html{
+	height: 100%;
+}
+
+.top-nav{
+	width: 100%;
+	background-color: 
+}
+.side-nav{
+	width: 200px;
+	height: 100%;
+	background-color: #2e3238;
+}
+
+.side-nav-list{
+	padding: 10px 20px;
+}
+
+.side-nav-list>li{
+	padding: 10px 20px;
+	border-radius: 50px;
+}
+
+.side-nav-list>li:hover{
+	background-color: grey;
+}
+
+.side-nav-list>li:active{
+	background-color: grey;
+}
+
+
+.pe-container{
+	background-color: green;
+	color: white;
+}
+
+.pe-container>div{
+	padding: 10px 20px;
+	text-align: center;
+}
+
+.content-area{
+	margin-left: 200px;
+}
+
+a{
+	color: white;
+	text-decoration: none;
 }
