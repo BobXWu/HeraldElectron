@@ -38,48 +38,41 @@ app.config(['$routeProvider', function($routeProvider){
 		.when('/gpa',{
 			templateUrl: 'content/gpa.html',
 			controller: 'gpa_ctrl'})
-		.when('tice', {
+		.when('/tice', {
 			templateUrl: 'content/tice.html',
-			controller: 'tice_ctrl'
-		})
-		.when('lecture', {
+			controller: 'tice_ctrl'})
+		.when('/srtp', {
+			templateUrl: 'content/srtp.html',
+			controller: 'srtp_ctrl'})
+		.when('/lecture', {
 			templateUrl: 'content/lecture.html',
-			controller: 'lecture_ctrl'
-		})
-		.when('card', {
+			controller: 'lecture_ctrl'})
+		.when('/card', {
 			templateUrl: 'content/card.html',
-			controller: 'card_ctrl'
-		})
-		.when('nic', {
+			controller: 'card_ctrl'})
+		.when('/nic', {
 			templateUrl: 'content/nic.html',
-			controller: 'nic_ctrl'
-		})
-		.when('library', {
+			controller: 'nic_ctrl'})
+		.when('/library', {
 			templateUrl: 'content/library.html',
-			controller: 'library_ctrl'
-		})
-		.when('jwc', {
+			controller: 'library_ctrl'})
+		.when('/jwc', {
 			templateUrl: 'content/jwc.html',
-			controller: 'jwc_ctrl'
-		})
-		.when('schoolbus', {
+			controller: 'jwc_ctrl'})
+		.when('/schoolbus', {
 			templateUrl: 'content/schoolbus.html',
-			controller: 'schoolbus_ctrl'
-		})
-		.when('phylab', {
+			controller: 'schoolbus_ctrl'})
+		.when('/phylab', {
 			templateUrl: 'content/phylab.html',
-			controller: 'phylab_ctrl'
-		})
-		.when('exam', {
+			controller: 'phylab_ctrl'})
+		.when('/exam', {
 			templateUrl: 'content/exam.html',
-			controller: 'exam_ctrl'
-		});
+			controller: 'exam_ctrl'});
 }]);
 
+const uuid = "87291a4edb373dd82a5f11bdd5f81ab30cb83445";
+
 app.controller('pe_ctrl', function($scope, $http){
-
-	var uuid = "87291a4edb373dd82a5f11bdd5f81ab30cb83445";
-
 	// get_uuid();
 	get_pe();
 
@@ -102,8 +95,6 @@ app.controller('pe_ctrl', function($scope, $http){
 		});
 	}
 
-	
-
 	function get_pe(){
 		$http({
 			method:'post', 
@@ -116,9 +107,41 @@ app.controller('pe_ctrl', function($scope, $http){
 			$scope.left_days = data.remain;
 		});
 	}
-
-
 });
+
+app.controller('phylab_ctrl', function($scope, $http){
+	get_phylab();
+
+	function get_phylab(){
+		$http({
+			method: 'post',
+			url: 'http://www.heraldstudio.com/api/phylab',
+			data: {
+				'uuid':uuid
+			}
+		}).success( function(data){
+			$scope.content = data.content;
+		});
+	}
+
+})
+
+app.controller('jwc_ctrl', function($scope, $http){
+	get_jwc();
+
+	function get_jwc(){
+		$http({
+			method: 'post',
+			url: 'http://www.heraldstudio.com/api/jwc',
+			data: {
+				'uuid':uuid
+			}
+		}).success( function(data){
+			$scope.content = data.content;
+		});
+	}
+
+})
 
 // app.controller('srtp_ctrl', function($scope, $http){
 

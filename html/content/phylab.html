@@ -1,2 +1,23 @@
-<div ng-contorller="srtp_ctrl">
+<div ng-contorller="phylab_ctrl" class="content-container">
+	<md-list ng-repeat="(key, value) in content" >
+		<md-title ng-if="value.length">{{key}}</md-title>
+		<md-list-item ng-repeat="x in value">
+			<div class="md-list-item-text">
+				<div class="left">
+					<div class="item-topfont">{{x.name}}</div>
+				<!-- 	<br>  -->
+					<div class="item-bottomfont">{{x.Date}} @ {{x.Address}}</div>
+					<!-- <br> -->
+					<div class="item-bottomfont">{{x.Teacher}}</div>
+				</div>
+
+				<div class="right">
+					{{x.Grade}}
+				</div>
+			</div>
+			<md-divider ng-if="!$last"></md-divider>
+		</md-list-item>	
+		<!-- </div> -->
+	</md-list>
+	
 </div>

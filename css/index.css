@@ -3,13 +3,20 @@ body, html{
 }
 
 .top-nav{
+	position: fixed;
 	width: 100%;
-	background-color: 
+	color: white;
+	background-color: #00afff;
+	z-index: 99;
 }
+
 .side-nav{
-	width: 200px;
+	position: fixed;
+	top: 48px;
+	width: 250px;
 	height: 100%;
-	background-color: #2e3238;
+	color: #6d6d6d;
+	background-color: #f1f1f1;
 }
 
 .side-nav-list{
@@ -17,22 +24,40 @@ body, html{
 }
 
 .side-nav-list>li{
-	padding: 10px 20px;
 	border-radius: 50px;
+	
+}
+
+.side-nav-list a{
+	display: block;
+	margin-bottom: 5px;
+	padding: 5px 20px;
+	color: #6d6d6d;
+	cursor: pointer;
+}
+
+.side-nav-list img{
+	width: 20px;
 }
 
 .side-nav-list>li:hover{
-	background-color: grey;
+	background-color: #e4e4e4;
 }
 
 .side-nav-list>li:active{
-	background-color: grey;
+	background-color: #e4e4e4;
 }
 
+.content-area{
+	margin-left: 250px;
+	color: #6d6d6d;
+}
 
-.pe-container{
-	background-color: green;
-	color: white;
+.content-container{
+	width: 80%;
+	max-width: 800px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .pe-container>div{
@@ -40,11 +65,17 @@ body, html{
 	text-align: center;
 }
 
-.content-area{
-	margin-left: 200px;
+.md-list-item-text{
+	width: 100%;
+	padding: 10px 0;
+	line-height: 25px;
 }
 
-a{
-	color: white;
-	text-decoration: none;
+.item-topfont{
+	color: #1976d2;
+}
+
+.item-bottomfont{
+	font-size: 8px;
+	color: #6d6d6d;
 }
