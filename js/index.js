@@ -1,16 +1,5 @@
 // const ipc = require('electron').ipcRenderer;
-
-// angular.module('toolbar', ['ngMaterial'])
-
-// .controller('AppCtrl', function($scope) {
-// 	$scope.newWindow = function(){
-// 		createWindow();
-// 	}
-
-// 	function createWindow () {
-// 	  ipc.send('createWebWindow');
-// 	}
-// });
+const uuid = "87291a4edb373dd82a5f11bdd5f81ab30cb83445";
 
 var app = angular.module('app',['ngMaterial', 'ngRoute']);
 
@@ -70,30 +59,10 @@ app.config(['$routeProvider', function($routeProvider){
 			controller: 'exam_ctrl'});
 }]);
 
-const uuid = "87291a4edb373dd82a5f11bdd5f81ab30cb83445";
 
 app.controller('pe_ctrl', function($scope, $http){
-	// get_uuid();
+
 	get_pe();
-
-	function get_uuid(){
-
-		var user = '213141166';
-		var password = 'wuxiaobao1166'
-		
-		$http({
-			method: 'post',
-			url: 'http://www.heraldstudio.com/uc/auth',
-			data: {
-				'user': user,
-				'password': password,
-				'appid': '34cc6df78cfa7cd457284e4fc377559e'
-			}
-		}).success( function(data){
-			console.log(data);
-			uuid = data;
-		});
-	}
 
 	function get_pe(){
 		$http({
@@ -143,17 +112,130 @@ app.controller('jwc_ctrl', function($scope, $http){
 
 })
 
-// app.controller('srtp_ctrl', function($scope, $http){
+app.controller('srtp_ctrl', function($scope, $http){
+	get_srtp();
 
-// 	function get_srtp(){
-// 		$http({
-// 			method:'post', 
-// 			url:'http://www.heraldstudio.com/api/srtp',
-// 			data:{
-// 				"uuid": uuid
-// 			}
-// 		}).success( function(data){  
-// 			$scope.srtp = data
-// 		});
-// 	}
-// });
+	function get_srtp(){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/api/srtp',
+			data:{
+				"uuid": uuid
+			}
+		}).success( function(data){  
+			$scope.content = data;
+		});
+	}
+});
+
+app.controller('lecture_ctrl', function($scope, $http){
+	get_lecture();
+
+	function get_lecture(){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/api/lecture',
+			data:{
+				"uuid": uuid
+			}
+		}).success( function(data){  
+
+		});
+	}
+});
+
+app.controller('gpa_ctrl', function($scope, $http){
+	get_gpa();
+
+	function get_gpa(){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/api/gpa',
+			data:{
+				"uuid": uuid
+			}
+		}).success( function(data){  
+
+		});
+	}
+});
+
+app.controller('tice_ctrl', function($scope, $http){
+	get_tice();
+
+	function get_tice(){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/api/tice',
+			data:{
+				"uuid": uuid
+			}
+		}).success( function(data){  
+
+		});
+	}
+});
+
+app.controller('card_ctrl', function($scope, $http){
+	get_card();
+
+	function get_card(){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/api/card',
+			data:{
+				"uuid": uuid
+			}
+		}).success( function(data){  
+
+		});
+	}
+});
+
+app.controller('nic_ctrl', function($scope, $http){
+	get_nic();
+
+	function get_nic(){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/api/nic',
+			data:{
+				"uuid": uuid
+			}
+		}).success( function(data){  
+
+		});
+	}
+});
+
+app.controller('schoolbus_ctrl', function($scope, $http){
+	get_schoolbus();
+
+	function get_schoolbus(){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/api/schoolbus',
+			data:{
+				"uuid": uuid
+			}
+		}).success( function(data){
+			$scope.content = data.content;
+		});
+	}
+});
+
+app.controller('exam_ctrl', function($scope, $http){
+	get_exam();
+
+	function get_exam(){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/api/exam',
+			data:{
+				"uuid": uuid
+			}
+		}).success( function(data){  
+
+		});
+	}
+});
