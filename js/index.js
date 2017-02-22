@@ -314,12 +314,26 @@ app.controller('exam_ctrl', function($scope, $http){
 });
 
 app.controller('library_ctrl', function($scope, $http, $mdToast){
+	if(contents.library){
+		$scope.content = contents.library;
+	}else{
+		$scope.loading = true;
+		get_library();
+	}
 
-	$scope.showSimpleToast = function() {
-		$mdToast.show(
-			$mdToast.simple()
-			.textContent('Simple Toast!')
-			.hideDelay(3000)
-		);
-  };
+	function get_library(){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/api/library',
+			data:{
+				"uuid": uuid
+			}
+		}).success( function(data){
+			
+			$scope.content = data.content;
+			$scope.loading = false;
+			contents.library = data.content;
+		});
+	}
+
 })
