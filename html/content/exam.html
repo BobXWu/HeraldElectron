@@ -1,20 +1,26 @@
-<div ng-contorller="exam_ctrl" class="content-container">
-	<md-list ng-if='content.length'>
-		<md-title>考试安排：</md-title>
-		<md-list-item ng-repeat="x in content">
-			<div class="md-list-item-text">
-				<div class="left">
-					<div class="top-font">{{x.course}}</div>
-					<div class="bottom-font">{{x.time}} @ {{x.location}}</div>
-					<div class="bottom-font">{{x.hour}}</div>
+<div ng-controller="exam_ctrl">
+	<div ng-if='loading' class="progress-circular-bk">
+		<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+	</div>
+	<div class="content-container" ng-if='!loading'>
+		<md-list ng-if='content.length'>
+			<md-title>考试安排：</md-title>
+			<md-list-item ng-repeat="x in content">
+				<div class="md-list-item-text">
+					<div class="left">
+						<div class="top-font">{{x.course}}</div>
+						<div class="bottom-font">{{x.time}} @ {{x.location}}</div>
+						<div class="bottom-font">{{x.hour}}</div>
+					</div>
+					<div class="right">
+						<div class="top-font">{{x.teacher}}</div>
+					</div>
 				</div>
-				<div class="right">
-					<div class="top-font">{{x.teacher}}</div>
-				</div>
-			</div>
-			<md-divider ng-if="!$last"></md-divider>
-		</md-list-item>
-		
-	</md-list>
-	<div class="ifnull" ng-if='!content.length'>空空如也</div>
+				<md-divider ng-if="!$last"></md-divider>
+			</md-list-item>
+			
+		</md-list>
+		<div class="ifnull" ng-if='!content.length'>暂无考试安排</div>	
+	</div>
+	
 </div>

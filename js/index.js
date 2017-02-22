@@ -1,7 +1,8 @@
 // const ipc = require('electron').ipcRenderer;
 const uuid = "87291a4edb373dd82a5f11bdd5f81ab30cb83445";
 
-var app = angular.module('app',['ngMaterial', 'ngRoute']);
+var app = angular.module('app',['ngMaterial', 'ui.router', 'ngAnimate']);
+var contents = {};
 
 app.config(function($httpProvider){  
 
@@ -19,50 +20,31 @@ app.config(function($httpProvider){
 
 });
 
-app.config(['$routeProvider', function($routeProvider){
-	$routeProvider
-		.when('/pe',{
-			templateUrl: 'content/pe.html',
-			controller: 'pe_ctrl'})
-		.when('/gpa',{
-			templateUrl: 'content/gpa.html',
-			controller: 'gpa_ctrl'})
-		.when('/tice', {
-			templateUrl: 'content/tice.html',
-			controller: 'tice_ctrl'})
-		.when('/srtp', {
-			templateUrl: 'content/srtp.html',
-			controller: 'srtp_ctrl'})
-		.when('/lecture', {
-			templateUrl: 'content/lecture.html',
-			controller: 'lecture_ctrl'})
-		.when('/card', {
-			templateUrl: 'content/card.html',
-			controller: 'card_ctrl'})
-		.when('/nic', {
-			templateUrl: 'content/nic.html',
-			controller: 'nic_ctrl'})
-		.when('/library', {
-			templateUrl: 'content/library.html',
-			controller: 'library_ctrl'})
-		.when('/jwc', {
-			templateUrl: 'content/jwc.html',
-			controller: 'jwc_ctrl'})
-		.when('/schoolbus', {
-			templateUrl: 'content/schoolbus.html',
-			controller: 'schoolbus_ctrl'})
-		.when('/phylab', {
-			templateUrl: 'content/phylab.html',
-			controller: 'phylab_ctrl'})
-		.when('/exam', {
-			templateUrl: 'content/exam.html',
-			controller: 'exam_ctrl'});
-}]);
+app.config(function($stateProvider){
+	$stateProvider
+	.state('home', {
+		url: '/:name',
+		templateUrl: function($stateParams){
+			return 'content/' + $stateParams.name + '.html';
+		}
+	});
+});
 
+app.controller('home_ctrl', function($scope, $http){
 
-app.controller('pe_ctrl', function($scope, $http){
+	if(contents.pe){
+		$scope.pe = contents.pe;
+	}else{
+		$scope.pe_loading = true;
+		get_pe();
+	}
 
-	get_pe();
+	if(contents.nic){
+		$scope.nic = contents.nic.content;
+	}else{
+		$scope.nic_loading = true;
+		get_nic();
+	}
 
 	function get_pe(){
 		$http({
@@ -71,15 +53,64 @@ app.controller('pe_ctrl', function($scope, $http){
 			data:{
 				"uuid": uuid
 			}
-		}).success( function(data){  
-			$scope.pe_count = data.content;
-			$scope.left_days = data.remain;
+		}).success( function(data){
+			contents.pe = data;
+			$scope.pe = data;
+			$scope.pe_loading = false;
+		});
+	}
+
+	function get_nic(){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/api/nic',
+			data:{
+				"uuid": uuid
+			}
+		}).success( function(data){
+			contents.nic = data;
+			$scope.nic = data.content;
+			$scope.nic_loading = false;
 		});
 	}
 });
 
+app.controller('huodong_ctrl', function($scope, $http, $timeout){
+	if(contents.huodong){
+		$scope.content = contents.huodong;
+		$timeout(function () {
+				$scope.loading = false;
+			}, 100);
+	}else{
+		get_huodong();
+	}
+
+
+	function get_huodong(){
+		$http({
+			method:'get', 
+			url: 'http://www.heraldstudio.com/herald/api/v1/huodong/get'
+		}).success( function(data){
+			$scope.content = data.content;
+			contents.huodong = data.content;
+
+			$timeout(function () {
+				$scope.loading = false;
+				}, 100);
+		});
+	}
+
+	
+});
+
 app.controller('phylab_ctrl', function($scope, $http){
-	get_phylab();
+	
+	if(contents.phylab){
+		$scope.content = contents.phylab.content;
+	}else{
+		$scope.loading = true;
+		get_phylab();
+	}
 
 	function get_phylab(){
 		$http({
@@ -89,14 +120,22 @@ app.controller('phylab_ctrl', function($scope, $http){
 				'uuid':uuid
 			}
 		}).success( function(data){
+			contents.phylab = data;
 			$scope.content = data.content;
+			$scope.loading = false;
 		});
 	}
 
-})
+});
 
 app.controller('jwc_ctrl', function($scope, $http){
-	get_jwc();
+
+	if(contents.jwc){
+		$scope.content = contents.jwc.content;
+	}else{
+		$scope.loading = true;
+		get_jwc();
+	}
 
 	function get_jwc(){
 		$http({
@@ -106,14 +145,22 @@ app.controller('jwc_ctrl', function($scope, $http){
 				'uuid':uuid
 			}
 		}).success( function(data){
+			contents.jwc = data;
 			$scope.content = data.content;
+			$scope.loading = false;
 		});
 	}
 
-})
+});
 
 app.controller('srtp_ctrl', function($scope, $http){
-	get_srtp();
+	if(contents.srtp){
+		$scope.main_info = contents.srtp.main_info;
+		$scope.content = contents.srtp.content;
+	}else{
+		$scope.loading = true;
+		get_srtp();
+	}
 
 	function get_srtp(){
 		$http({
@@ -122,14 +169,25 @@ app.controller('srtp_ctrl', function($scope, $http){
 			data:{
 				"uuid": uuid
 			}
-		}).success( function(data){  
-			$scope.content = data;
+		}).success( function(data){
+			$scope.main_info = data.content.shift();
+			$scope.content = data.content;
+			$scope.loading = false;	
+
+			contents.srtp = {};
+			contents.srtp.main_info = $scope.main_info;
+			contents.srtp.content = $scope.content;
 		});
 	}
 });
 
 app.controller('lecture_ctrl', function($scope, $http){
-	get_lecture();
+	if(contents.lecture){
+		$scope.content = contents.lecture;
+	}else{
+		$scope.loading = true;
+		get_lecture();
+	}
 
 	function get_lecture(){
 		$http({
@@ -138,14 +196,23 @@ app.controller('lecture_ctrl', function($scope, $http){
 			data:{
 				"uuid": uuid
 			}
-		}).success( function(data){  
-
+		}).success( function(data){
+			$scope.content = data.content.detial;
+			$scope.loading = false;
+			contents.lecture = $scope.content;
 		});
 	}
 });
 
 app.controller('gpa_ctrl', function($scope, $http){
-	get_gpa();
+	if(contents.gpa){
+		$scope.main_info = contents.gpa.main_info;
+		$scope.content = contents.gpa.content;
+	}else{
+		$scope.loading = true;
+		get_gpa();
+	}
+
 
 	function get_gpa(){
 		$http({
@@ -154,62 +221,59 @@ app.controller('gpa_ctrl', function($scope, $http){
 			data:{
 				"uuid": uuid
 			}
-		}).success( function(data){  
+		}).success( function(data){
+			$scope.main_info = data.content.shift();
+			var content={}, semester;
 
-		});
-	}
-});
-
-app.controller('tice_ctrl', function($scope, $http){
-	get_tice();
-
-	function get_tice(){
-		$http({
-			method:'post', 
-			url:'http://www.heraldstudio.com/api/tice',
-			data:{
-				"uuid": uuid
+			for(var i in data.content){
+				semester = data.content[i].semester;
+				if( !content[semester])
+					content[semester] = [];
+				content[semester].push(data.content[i]);
 			}
-		}).success( function(data){  
 
+			$scope.content = content;
+			$scope.loading = false;
+			contents.gpa = {};
+			contents.gpa.content = content;
+			contents.gpa.main_info = content;
 		});
 	}
 });
+
 
 app.controller('card_ctrl', function($scope, $http){
-	get_card();
+	if(contents.card){
+		$scope.content = contents.card;
+	}else{
+		$scope.loading = true;
+		get_card();
+	}
 
 	function get_card(){
 		$http({
-			method:'post', 
+			method:'post',
 			url:'http://www.heraldstudio.com/api/card',
 			data:{
 				"uuid": uuid
 			}
-		}).success( function(data){  
-
+		}).success( function(data){
+			$scope.content = data.content;
+			$scope.loading = false;
+			contents.card = data.content;
 		});
 	}
 });
 
-app.controller('nic_ctrl', function($scope, $http){
-	get_nic();
 
-	function get_nic(){
-		$http({
-			method:'post', 
-			url:'http://www.heraldstudio.com/api/nic',
-			data:{
-				"uuid": uuid
-			}
-		}).success( function(data){  
-
-		});
-	}
-});
 
 app.controller('schoolbus_ctrl', function($scope, $http){
-	get_schoolbus();
+	if(contents.schoolbus){
+		$scope.content = contents.schoolbus;
+	}else{
+		$scope.loading = true;
+		get_schoolbus();
+	}
 
 	function get_schoolbus(){
 		$http({
@@ -220,12 +284,19 @@ app.controller('schoolbus_ctrl', function($scope, $http){
 			}
 		}).success( function(data){
 			$scope.content = data.content;
+			$scope.loading = false;
+			contents.schoolbus = data.content;
 		});
 	}
 });
 
 app.controller('exam_ctrl', function($scope, $http){
-	get_exam();
+	if(contents.exam){
+		$scope.content = contents.exam;
+	}else{
+		$scope.loading = true;
+		get_exam();
+	}
 
 	function get_exam(){
 		$http({
@@ -235,7 +306,20 @@ app.controller('exam_ctrl', function($scope, $http){
 				"uuid": uuid
 			}
 		}).success( function(data){  
-
+			$scope.content = data;
+			$scope.loading = false;
+			contents.exam = data;
 		});
 	}
 });
+
+app.controller('library_ctrl', function($scope, $http, $mdToast){
+
+	$scope.showSimpleToast = function() {
+		$mdToast.show(
+			$mdToast.simple()
+			.textContent('Simple Toast!')
+			.hideDelay(3000)
+		);
+  };
+})
