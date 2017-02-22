@@ -1,2 +1,18 @@
-<div ng-contorller="srtp_ctrl">
+<div ng-contorller="card_ctrl" class="content-container" ng-cloak>
+	<md-list >
+		<md-title ng-if="content.detial.length">消费记录：</md-title>
+		<md-list-item ng-repeat="x in content.detial">
+			<div class="md-list-item-text">
+				<div class="left">
+					<div class="top-font">消费 {{x.price}}</div>
+					<div class="bottom-font">{{x.date}} @ {{x.system}}</div>
+				</div>
+				<div class="right">
+					<div class="top-font">剩余 {{x.left}}</div>
+				</div>
+			</div>
+			<md-divider ng-if="!$last"></md-divider>
+		</md-list-item>
+	</md-list>
+	<div ng-if="!content.detial.length" class="ifnull">没有消费记录，赶紧买买买</div>
 </div>
