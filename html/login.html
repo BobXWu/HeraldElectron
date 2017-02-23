@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<title>小猴偷米</title>
+	<link rel="stylesheet" href="../css/3rd/angular-material.min.css">
+	<link rel="stylesheet" href="../css/3rd/ng-animation.css">
+	<link rel="stylesheet" href="../css/global.css">
+	<link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+	<div ng-app="login_app" ng-controller="login_ctrl" ng-cloak>
+
+		<div layout="row">
+			<md-input-container flex="50">
+				<label>一卡通号</label>
+				<input ng-model="cardnum">
+			</md-input-container>
+			<md-input-container flex="50">
+				<label>密码</label>
+				<input type="password" ng-model="password">
+			</md-input-container>
+		</div>
+		
+		<md-button ng-click="login_click()">登录</md-button>
+
+	</div>
+
+	<script src="../js/3rd/angular.min.js"></script>
+	<script src="../js/3rd/angular-ui-router.js"></script>
+	<script src="../js/3rd/angular-animate.min.js"></script>
+	<script src="../js/3rd/angular-aria.min.js"></script>
+	<script src="../js/3rd/angular-messages.min.js"></script>
+	<script src="../js/3rd/angular-material.min.js"></script>
+	<script src="http://cdn.bootcss.com/angular-cookie/4.1.0/angular-cookie.min.js"></script>
+	<script src="../js/login.js"></script>
+</body>
+</html>

@@ -25,7 +25,12 @@ app.config(function($stateProvider){
 	.state('home', {
 		url: '/:name',
 		templateUrl: function($stateParams){
-			return 'content/' + $stateParams.name + '.html';
+			if ($stateParams.name==""){
+				return "content/home.html";
+			}
+			else{
+				return 'content/' + $stateParams.name + '.html';
+			}
 		}
 	});
 });
