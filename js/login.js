@@ -16,7 +16,7 @@ login_app.config(function($httpProvider){
 
 });
 
-login_app.controller("login_ctrl", function($scope, $http, $location, ipCookie){
+login_app.controller("login_ctrl", function($scope, $http, $window, ipCookie){
 
 	$scope.login_click = function(){
 		//检查cardnum 和 password合法性
@@ -37,7 +37,7 @@ login_app.controller("login_ctrl", function($scope, $http, $location, ipCookie){
 
 				console.log(data);
 				ipCookie("uuid", data, {"expires": 7});
-				location.href = "index.html";
+				$window.location.href = "index.html/#/home";
 				
 			}).error(function(data,status) {
 				console.log(data);

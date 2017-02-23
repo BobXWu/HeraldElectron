@@ -35,7 +35,13 @@ app.config(function($stateProvider){
 	});
 });
 
+app.controller('side_nav_ctrl', function($scope, $location){
+	$location.path("/home");
+});
+
 app.controller('home_ctrl', function($scope, $http){
+
+
 
 	if(contents.pe){
 		$scope.pe = contents.pe;
@@ -80,6 +86,7 @@ app.controller('home_ctrl', function($scope, $http){
 	}
 });
 
+//活动
 app.controller('huodong_ctrl', function($scope, $http, $timeout){
 	if(contents.huodong){
 		$scope.content = contents.huodong;
@@ -98,6 +105,8 @@ app.controller('huodong_ctrl', function($scope, $http, $timeout){
 		}).success( function(data){
 			$scope.content = data.content;
 			contents.huodong = data.content;
+			
+			console.log(data.content);
 
 			$timeout(function () {
 				$scope.loading = false;
@@ -105,6 +114,9 @@ app.controller('huodong_ctrl', function($scope, $http, $timeout){
 		});
 	}
 
+	$scope.if_limited = function(url){
+		return url.match('http://mmbiz.qpic.cn');
+	}
 	
 });
 

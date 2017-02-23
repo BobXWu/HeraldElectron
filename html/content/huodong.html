@@ -12,7 +12,7 @@
 							<div class="bottom-font">{{x.association}}</div>
 						</div>
 						<div style="width: 100%">
-								<img style="display:block;width: 100%" src="{{x.pic_url}}" alt="{{x.pic_url}}">
+								<img style="display:block;width: 100%" src="{{if_limited(x.pic_url)? 'http://read.html5.qq.com/image?src=forum&q=5&r=0&imgflag=7&imageUrl=' +x.pic_url : x.pic_url}}" alt="{{x.pic_url}}">
 						</div>
 						<div class="md-list-item-text">
 							<div class="bottom-font">活动时间：{{x.activity_time}}</div>
