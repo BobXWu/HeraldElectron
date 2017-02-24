@@ -37,6 +37,49 @@ app.config(function($stateProvider){
 
 app.controller('side_nav_ctrl', function($scope, $location){
 	// $location.path("home");
+	$scope.active_name = "home";
+
+	$scope.items = [{
+			"name_en": "home",
+			"name_zh": "主页"
+		},
+		{
+			"name_en": "huodong",
+			"name_zh": "活动"
+		},{
+			"name_en": "gpa",
+			"name_zh": "绩点"
+		},{
+			"name_en": "srtp",
+			"name_zh": "SRTP"
+		},{
+			"name_en": "lecture",
+			"name_zh": "人文讲座"
+		},{
+			"name_en": "card",
+			"name_zh": "一卡通余额"
+		},{
+			"name_en": "library",
+			"name_zh": "图书馆"
+		},{
+			"name_en": "jwc",
+			"name_zh": "图书馆"
+		},{
+			"name_en": "schoolbus",
+			"name_zh": "校车"
+		},{
+			"name_en": "phylab",
+			"name_zh": "物理实验课程"
+		},{
+			"name_en": "exam",
+			"name_zh": "考试安排"
+		}
+	];
+
+	$scope.change_item = function(index){
+		console.log(index);
+		$scope.active_name = $scope.items[index].name_en;
+	}
 });
 
 app.controller('home_ctrl', function($scope, $http){
@@ -285,7 +328,6 @@ app.controller('lecture_ctrl', function($scope, $http){
 		$scope.loading = true;
 		get_lecture();
 	}
-
 
 	function get_lecture(){
 		$http({

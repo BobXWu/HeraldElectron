@@ -24,7 +24,11 @@
 		<!-- 左侧导航栏 -->
 		<div class="side-nav left" ng-controller="side_nav_ctrl">
 			<ul class="side-nav-list">
-				<li><a href="#/home"><img src="../res/image/ic_home_invert.png">&nbsp;&nbsp;主页</a></li>
+				<li ng-repeat="x in items"  ng-class="{true:'active', false:''}[x.name_en==active_name]" ng-click="change_item($index)"><a href="{{'#/' + x.name_en}}">
+					<img src="{{'../res/image/ic_' + x.name_en + '_invert.png'}}">&nbsp;&nbsp;{{x.name_zh}}</a>
+				</li>
+				
+				<!-- <li ng-repeat="x in items" ng-class="{{  ?  :  }}""><a href="#/home"><img src="../res/image/ic_home_invert.png">&nbsp;&nbsp;主页</a></li>
 				<li><a href="#/huodong"><img src="../res/image/ic_home_invert.png">&nbsp;&nbsp;活动</a></li>
 				
 				<md-divider></md-divider>
@@ -36,7 +40,7 @@
 				<li><a href="#/jwc"><img src="../res/image/ic_jwc_invert.png">&nbsp;&nbsp;教务处</a></li>
 				<li><a href="#/schoolbus"><img src="../res/image/ic_bus_invert.png">&nbsp;&nbsp;校车</a></li>
 				<li><a href="#/phylab"><img src="../res/image/ic_experiment_invert.png">&nbsp;&nbsp;物理实验课程</a></li>
-				<li><a href="#/exam"><img src="../res/image/ic_exam_invert.png">&nbsp;&nbsp;考试安排</a></li>	
+				<li><a href="#/exam"><img src="../res/image/ic_exam_invert.png">&nbsp;&nbsp;考试安排</a></li>	 -->
 			</ul>
 		</div>
 

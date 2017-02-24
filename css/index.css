@@ -43,9 +43,11 @@ body, html{
 
 .side-nav-list>li:hover{
 	background-color: #e4e4e4;
+	box-shadow: 
+	transition: background-color .5s;
 }
 
-.side-nav-list>li:active{
+.side-nav-list>li.active{
 	background-color: #e4e4e4;
 }
 
