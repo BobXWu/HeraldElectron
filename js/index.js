@@ -1,7 +1,8 @@
-// const ipc = require('electron').ipcRenderer;
-const uuid = "87291a4edb373dd82a5f11bdd5f81ab30cb83445";
+const ipc = require('electron').ipcRenderer;
+// const uuid = "87291a4edb373dd82a5f11bdd5f81ab30cb83445";
 
 var app = angular.module('app',['ngMaterial', 'ui.router', 'ngAnimate']);
+var uuid = localStorage.uuid;
 
 app.config(function($httpProvider){  
 
@@ -33,6 +34,13 @@ app.config(function($stateProvider){
 			
 		}
 	});
+});
+
+app.controller('top_nav_ctrl', function($scope){
+	$scope.close_click = function(){
+		console.log("close main window");
+		ipc.send('closeMainWindow');
+	}
 });
 
 app.controller('side_nav_ctrl', function($scope, $location){
@@ -77,7 +85,6 @@ app.controller('side_nav_ctrl', function($scope, $location){
 	];
 
 	$scope.change_item = function(index){
-		console.log(index);
 		$scope.active_name = $scope.items[index].name_en;
 	}
 });

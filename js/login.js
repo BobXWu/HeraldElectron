@@ -1,3 +1,5 @@
+const ipc = require('electron').ipcRenderer;
+
 var login_app = angular.module("login_app", ["ngMaterial", "ipCookie"])
 
 login_app.config(function($httpProvider){  
@@ -16,7 +18,7 @@ login_app.config(function($httpProvider){
 
 });
 
-login_app.controller("login_ctrl", function($scope, $http, $window, ipCookie){
+login_app.controller("login_ctrl", function($scope, $http, $window){
 
 	$scope.login_click = function(){
 		//检查cardnum 和 password合法性
@@ -36,8 +38,9 @@ login_app.controller("login_ctrl", function($scope, $http, $window, ipCookie){
 			}).success( function(data){
 
 				console.log(data);
-				ipCookie("uuid", data, {"expires": 7});
-				$window.location.href = "index.html/#/home";
+				localStorage.uuid = data;
+				// $window.location.href = "index.html";
+				ipc.send("createMainWindow");
 				
 			}).error(function(data,status) {
 				console.log(data);

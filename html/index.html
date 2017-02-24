@@ -12,13 +12,24 @@
 <body>
 	<div ng-app="app" ng-cloak>
 		<!-- 顶部栏 -->
-		<div class="top-nav">
-			<div class="left brand-name">
-				小猴偷米
-			</div>
-			<div class="">
-				<md-button></md-button>
-			</div>
+		<div class="top-nav clearfix" ng-controller="top_nav_ctrl">
+			<!-- <div class=""> -->
+				<div class="left brand-pic">
+					<img src="../res/image/40.png" alt="">
+				</div>
+				<div class="left brand-name">
+					&nbsp;&nbsp;&nbsp;小猴偷米
+				</div>
+				<!-- <div class="clearfix"> -->
+					<!-- <div class="right"> -->
+						<div ng-click="close_click()" class="right close-button">
+							<img src="../res/image/ic_close_black_18px.svg" alt="">
+						</div>
+
+					<!-- </div> -->
+				<!-- </div> -->
+	
+			<!-- </div> -->
 		</div>
 
 		<!-- 左侧导航栏 -->
@@ -27,29 +38,15 @@
 				<li ng-repeat="x in items"  ng-class="{true:'active', false:''}[x.name_en==active_name]" ng-click="change_item($index)"><a href="{{'#/' + x.name_en}}">
 					<img src="{{'../res/image/ic_' + x.name_en + '_invert.png'}}">&nbsp;&nbsp;{{x.name_zh}}</a>
 				</li>
-				
-				<!-- <li ng-repeat="x in items" ng-class="{{  ?  :  }}""><a href="#/home"><img src="../res/image/ic_home_invert.png">&nbsp;&nbsp;主页</a></li>
-				<li><a href="#/huodong"><img src="../res/image/ic_home_invert.png">&nbsp;&nbsp;活动</a></li>
-				
-				<md-divider></md-divider>
-				<li><a href="#/gpa"><img src="../res/image/ic_grade_invert.png">&nbsp;&nbsp;绩点查询</a></li>
-				<li><a href="#/srtp"><img src="../res/image/ic_srtp_invert.png">&nbsp;&nbsp;SRTP</a></li>
-				<li><a href="#/lecture"><img src="../res/image/ic_lecture_invert.png">&nbsp;&nbsp;人文讲座查询</a></li>
-				<li><a href="#/card"><img src="../res/image/ic_card_invert.png">&nbsp;&nbsp;一卡通余额</a></li>
-				<li><a href="#/library"><img src="../res/image/ic_library_invert.png">&nbsp;&nbsp;图书馆</a></li>
-				<li><a href="#/jwc"><img src="../res/image/ic_jwc_invert.png">&nbsp;&nbsp;教务处</a></li>
-				<li><a href="#/schoolbus"><img src="../res/image/ic_bus_invert.png">&nbsp;&nbsp;校车</a></li>
-				<li><a href="#/phylab"><img src="../res/image/ic_experiment_invert.png">&nbsp;&nbsp;物理实验课程</a></li>
-				<li><a href="#/exam"><img src="../res/image/ic_exam_invert.png">&nbsp;&nbsp;考试安排</a></li>	 -->
 			</ul>
 		</div>
 
-		<div style="padding-left:250px;padding-top:48px" class=" clearfix">
-			<!-- 内容区域 -->
-			<div class="content-area" ui-view=""></div>
-		</div>
+		<!-- 内容区域 -->
+		<div class="content-area" ui-view=""></div>
 	</div>
-
+	
+	<script>if (typeof module === 'object') {window.module = module; module = undefined;}
+	</script>
 	<script src="../js/3rd/angular.min.js"></script>
 	<script src="../js/3rd/angular-ui-router.js"></script>
 	<script src="../js/3rd/angular-animate.min.js"></script>

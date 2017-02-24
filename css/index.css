@@ -5,15 +5,44 @@ body, html{
 .top-nav{
 	position: fixed;
 	width: 100%;
+	box-sizing: border-box;
 	color: white;
 	background-color: #00afff;
 	box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
 	z-index: 99;
 }
 
+.top-nav .left{
+	padding: 5px;
+}
+
+.top-nav .right{
+	width: 40px;
+	height: 40px;
+	line-height: 35px;
+}
+
+.close-button>img{
+	margin-left: 5px;
+	vertical-align: bottom;
+}
+
+.close-button:hover{
+	background-color: #e84351;
+}
+
+.brand-pic img{
+	display: block;
+	width: 30px;
+}
+
+.brand-name{
+	line-height: 30px;
+	font-size: 18px;
+}
 .side-nav{
 	position: fixed;
-	top: 48px;
+	top: 40px;
 	width: 250px;
 	height: 100%;
 	color: #6d6d6d;
@@ -52,8 +81,13 @@ body, html{
 }
 
 .content-area{
-	position:relative;
+	position: fixed;
+	top: 40px;
+	bottom: 0;
+	left: 250px;
+	right: 0;
 	color: #6d6d6d;
+	overflow-y: scroll;
 }
 
 .content-container{

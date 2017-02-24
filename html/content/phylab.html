@@ -3,7 +3,7 @@
 		<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 	</div>
 	<div class="content-container" ng-if='!loading'>
-		<md-list ng-repeat="(key, value) in content" >
+		<md-list ng-repeat="(key, value) in content" ng-if="value.length">
 			<md-title ng-if="value.length">{{key}}</md-title>
 			<md-list-item ng-repeat="x in value">
 				<div class="md-list-item-text">
