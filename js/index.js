@@ -1,4 +1,6 @@
 const ipc = require('electron').ipcRenderer;
+const remote = require('electron').remote;
+
 // const uuid = "87291a4edb373dd82a5f11bdd5f81ab30cb83445";
 
 var app = angular.module('app',['ngMaterial', 'ui.router', 'ngAnimate']);
@@ -71,7 +73,7 @@ app.controller('side_nav_ctrl', function($scope, $location){
 			"name_zh": "图书馆"
 		},{
 			"name_en": "jwc",
-			"name_zh": "图书馆"
+			"name_zh": "教务处"
 		},{
 			"name_en": "schoolbus",
 			"name_zh": "校车"
@@ -183,7 +185,6 @@ app.controller('huodong_ctrl', function($scope, $http, $timeout){
 			url: 'http://www.heraldstudio.com/herald/api/v1/huodong/get'
 		}).success( function(data){
 			$scope.content = data.content;
-			console.log(data.content);
 
 			for( var i in data.content ){
 				if( if_limited(data.content[i].pic_url) ){
@@ -204,7 +205,14 @@ app.controller('huodong_ctrl', function($scope, $http, $timeout){
 	function if_limited(url){
 		return url.match('http://mmbiz.qpic.cn');
 	}
+
+	$scope.open_huodong = function(url){
+		// require('electron').openExternal(url);
+		remote.getGlobal('sharedObject').huodong_url = url;
+		ipc.send('createPageWindow');
+	}
 	
+
 });
 
 app.controller('phylab_ctrl', function($scope, $http){

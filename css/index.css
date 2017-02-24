@@ -109,6 +109,10 @@ body, html{
 	line-height: 25px;
 }
 
+.md-list-item-text .left{
+	max-width: 300px;
+}
+
 .md-list-item-text .top-font{
 	color: #1976d2;
 }

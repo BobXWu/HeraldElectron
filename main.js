@@ -4,6 +4,7 @@ const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 const ipc = electron.ipcMain;
+const Menu = electron.Menu;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -11,10 +12,19 @@ let loginWindow; //登录窗口
 let mainWindow;  //主窗口
 let pageWindow;   //浏览其他web页面的窗口
 
+global.sharedObject = {
+  "huodong_url": ""
+};
+
 function createLoginWindow(){
-  loginWindow = new BrowserWindow({width: 300, height: 500, show: false, frame: false})
+  loginWindow = new BrowserWindow({width: 300, height: 450, show: false, frame: false})
   loginWindow.loadURL(`file://${__dirname}/html/login.html`)
   // loginWindow.webContents.openDevTools()
+ 
+  var template = []
+
+  var menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu);
 
   loginWindow.on('closed', function(){
     loginWindow = null;
@@ -50,9 +60,12 @@ function createMainWindow () {
 }
 
 function createPageWindow(){
-  pageWindow = new BrowserWindow({width: 800, height: 600, parent: mainWindow, modal: true, show: true})
-  // pageWindow.loadURL(`file://${__dirname}/html/login.html`)
-  pageWindow.loadURL('https://github.com')
+  pageWindow = new BrowserWindow({width: 800, height: 600, parent: mainWindow, modal: true, show: true, frame: true})
+
+  var url = global.sharedObject.huodong_url
+  pageWindow.loadURL( url )
+  mainWindow.webContents.openDevTools()
+
   pageWindow.on('closed', function(){
     pageWindow = null
   })
@@ -91,6 +104,15 @@ ipc.on('createMainWindow', function(){
   createMainWindow()
 })
 
+//打开新web浏览页面
+ipc.on('createPageWindow', function(){
+  createPageWindow()
+})
+
+ipc.on('closeLoginWindow', function(){
+  loginWindow.close()
+})
+
 //关闭web浏览页面
 ipc.on('closePageWindow', function(){
    pageWindow.close()
@@ -101,7 +123,3 @@ ipc.on('closeMainWindow', function(){
   mainWindow.close()
 })
 
-//打开新web浏览页面
-ipc.on('createPageWindow', function(){
-  createPageWindow()
-})

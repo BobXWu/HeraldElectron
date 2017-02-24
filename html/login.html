@@ -10,20 +10,26 @@
 	<link rel="stylesheet" href="../css/login.css">
 </head>
 <body>
-	<div class="login-container" ng-app="login_app" ng-controller="login_ctrl" ng-cloak>
-		<!-- <div layout="column"> -->
-			<md-card>
-				<md-input-container>
-					<label>一卡通号</label>
-					<input ng-model="cardnum">
-				</md-input-container>
-				<md-input-container>
-					<label>密码</label>
-					<input ng-keydown="key_down()" type="password" ng-model="password">
-				</md-input-container>
-				<md-button class="login-button" ng-click="login_click()">登录</md-button>
-			</md-card>
-		<!-- </div> -->
+	<div ng-app="login_app" ng-controller="login_ctrl" ng-cloak>
+		<div class="top-nav clearfix">
+			<div class="left brand-name"><span>小猴偷米</span></div>
+			<div ng-click="close_click()" class="right close-button">
+				<img src="../res/image/ic_close_black_18px.svg" alt="">
+			</div>
+		</div>
+		<img class="brand-pic" src="../res/image/80.png" alt="">
+		<div class="login-container" layout="column">
+			<md-input-container>
+				<label>一卡通号</label>
+				<input ng-model="cardnum">
+			</md-input-container>
+			<md-input-container>
+				<label>密码</label>
+				<input ng-keydown="key_down()" type="password" ng-model="password">
+			</md-input-container>
+			<md-button class="login-button md-raised md-primary" ng-click="login_click()">登录</md-button>
+		</div>
+
 	</div>
 
 	<script>if (typeof module === 'object') {window.module = module; module = undefined;}
