@@ -2,7 +2,6 @@
 const uuid = "87291a4edb373dd82a5f11bdd5f81ab30cb83445";
 
 var app = angular.module('app',['ngMaterial', 'ui.router', 'ngAnimate']);
-var contents = {};
 
 app.config(function($httpProvider){  
 
@@ -25,37 +24,54 @@ app.config(function($stateProvider){
 	.state('home', {
 		url: '/:name',
 		templateUrl: function($stateParams){
-			if ($stateParams.name==""){
-				return "content/home.html";
-			}
-			else{
+			// if ($stateParams.name==""){
+				// return "content/home.html";
+			// }
+			// else{
+				console.log("$stateParams.name: "+$stateParams.name);
 				return 'content/' + $stateParams.name + '.html';
-			}
+			
 		}
 	});
 });
 
 app.controller('side_nav_ctrl', function($scope, $location){
-	$location.path("/home");
+	// $location.path("home");
 });
 
 app.controller('home_ctrl', function($scope, $http){
 
+	set_pe();
+	set_nic();
 
-
-	if(contents.pe){
-		$scope.pe = contents.pe;
-	}else{
+	function set_pe(){
+		if(localStorage.pe){
+			var pe = JSON.parse( localStorage.pe );
+			if( new Date().getTime() < pe.expires){
+				$scope.pe = pe;
+				console.log("没过期");
+				return 0;
+			}
+		}
+		console.log("过期");
 		$scope.pe_loading = true;
 		get_pe();
 	}
 
-	if(contents.nic){
-		$scope.nic = contents.nic.content;
-	}else{
+	function set_nic(){
+		if(localStorage.nic){
+			var nic = JSON.parse( localStorage.nic );
+			if( new Date().getTime() < nic.expires){
+				$scope.nic = nic.content;
+				console.log("没过期");
+				return 0;
+			}
+		}
+		console.log("过期");
 		$scope.nic_loading = true;
 		get_nic();
 	}
+
 
 	function get_pe(){
 		$http({
@@ -65,9 +81,11 @@ app.controller('home_ctrl', function($scope, $http){
 				"uuid": uuid
 			}
 		}).success( function(data){
-			contents.pe = data;
 			$scope.pe = data;
 			$scope.pe_loading = false;
+			data.expires = new Date().getTime() + 3600000;
+			localStorage.pe = JSON.stringify(data);
+			console.log( data );
 		});
 	}
 
@@ -79,24 +97,35 @@ app.controller('home_ctrl', function($scope, $http){
 				"uuid": uuid
 			}
 		}).success( function(data){
-			contents.nic = data;
 			$scope.nic = data.content;
 			$scope.nic_loading = false;
+			data.expires = new Date().getTime() + 3600000;
+			localStorage.nic = JSON.stringify(data);
 		});
 	}
+
 });
 
 //活动
 app.controller('huodong_ctrl', function($scope, $http, $timeout){
-	if(contents.huodong){
-		$scope.content = contents.huodong;
-		$timeout(function () {
-				$scope.loading = false;
-			}, 100);
-	}else{
+	
+	set_huodong();
+
+	function set_huodong(){
+		if( localStorage.huodong ){
+			var huodong = JSON.parse( localStorage.huodong );
+			if( new Date().getTime() < huodong.expires){
+				$scope.content = huodong.content;
+				console.log( $scope.content );
+				console.log("没过期");
+				return 0;
+			}
+		}
+
+		console.log("过期");
+		$scope.loading = true;
 		get_huodong();
 	}
-
 
 	function get_huodong(){
 		$http({
@@ -104,17 +133,25 @@ app.controller('huodong_ctrl', function($scope, $http, $timeout){
 			url: 'http://www.heraldstudio.com/herald/api/v1/huodong/get'
 		}).success( function(data){
 			$scope.content = data.content;
-			contents.huodong = data.content;
-			
 			console.log(data.content);
+
+			for( var i in data.content ){
+				if( if_limited(data.content[i].pic_url) ){
+					data.content[i].pic_url = 'http://read.html5.qq.com/image?src=forum&q=5&r=0&imgflag=7&imageUrl='
+												+ data.content[i].pic_url;
+				}
+			}
 
 			$timeout(function () {
 				$scope.loading = false;
 				}, 100);
+			
+			data.expires = new Date().getTime() + 3600000;
+			localStorage.huodong = JSON.stringify( data );
 		});
 	}
 
-	$scope.if_limited = function(url){
+	function if_limited(url){
 		return url.match('http://mmbiz.qpic.cn');
 	}
 	
@@ -122,12 +159,22 @@ app.controller('huodong_ctrl', function($scope, $http, $timeout){
 
 app.controller('phylab_ctrl', function($scope, $http){
 	
-	if(contents.phylab){
-		$scope.content = contents.phylab.content;
-	}else{
+	set_phylab();
+
+	function set_phylab(){
+		if(localStorage.phylab){
+			var phylab = JSON.parse( localStorage.phylab );
+			if( new Date().getTime() < phylab.expires){
+				$scope.content = phylab.content;
+				console.log("没过期");
+				return 0;
+			}
+		}
+
 		$scope.loading = true;
 		get_phylab();
 	}
+
 
 	function get_phylab(){
 		$http({
@@ -137,9 +184,10 @@ app.controller('phylab_ctrl', function($scope, $http){
 				'uuid':uuid
 			}
 		}).success( function(data){
-			contents.phylab = data;
 			$scope.content = data.content;
 			$scope.loading = false;
+			data.expires = new Date().getTime() + 86400000;
+			localStorage.phylab = JSON.stringify( data );
 		});
 	}
 
@@ -147,11 +195,21 @@ app.controller('phylab_ctrl', function($scope, $http){
 
 app.controller('jwc_ctrl', function($scope, $http){
 
-	if(contents.jwc){
-		$scope.content = contents.jwc.content;
-	}else{
+	set_jwc();
+
+	function set_jwc(){
+		if(localStorage.jwc){
+			var jwc = JSON.parse( localStorage.jwc );
+			if( new Date().getTime() < jwc.expires){
+				$scope.content = jwc.content;
+				console.log("没过期");
+				return 0;
+			}
+		}
+
 		$scope.loading = true;
 		get_jwc();
+
 	}
 
 	function get_jwc(){
@@ -162,19 +220,31 @@ app.controller('jwc_ctrl', function($scope, $http){
 				'uuid':uuid
 			}
 		}).success( function(data){
-			contents.jwc = data;
+			
 			$scope.content = data.content;
 			$scope.loading = false;
+			data.expires = new Date().getTime() + 3600000;
+			localStorage.jwc = JSON.stringify(data);
 		});
 	}
 
 });
 
 app.controller('srtp_ctrl', function($scope, $http){
-	if(contents.srtp){
-		$scope.main_info = contents.srtp.main_info;
-		$scope.content = contents.srtp.content;
-	}else{
+	
+	set_srtp();
+
+	function set_srtp(){
+		if(localStorage.srtp){
+			var srtp = JSON.parse( localStorage.srtp );
+			if( new Date().getTime() < srtp.expires){
+				$scope.content = srtp.content;
+				$scope.main_info = srtp.main_info;
+				console.log("没过期");
+				return 0;
+			}
+		}
+
 		$scope.loading = true;
 		get_srtp();
 	}
@@ -187,24 +257,35 @@ app.controller('srtp_ctrl', function($scope, $http){
 				"uuid": uuid
 			}
 		}).success( function(data){
-			$scope.main_info = data.content.shift();
+			data.main_info = data.content.shift();
+			$scope.main_info = data.main_info;
 			$scope.content = data.content;
-			$scope.loading = false;	
-
-			contents.srtp = {};
-			contents.srtp.main_info = $scope.main_info;
-			contents.srtp.content = $scope.content;
+			$scope.loading = false;
+			
+			data.expires = new Date().getTime() + 86400000;
+			localStorage.srtp = JSON.stringify(data);
 		});
 	}
 });
 
 app.controller('lecture_ctrl', function($scope, $http){
-	if(contents.lecture){
-		$scope.content = contents.lecture;
-	}else{
+	
+	set_lecture();
+
+	function set_lecture(){
+		if( localStorage.lecture ){
+			var lecture = JSON.parse( localStorage.lecture );
+			if( new Date().getTime() < lecture.expires){
+				$scope.content = lecture.content.detial;
+				console.log("没过期");
+				return 0;
+			}
+		}
+
 		$scope.loading = true;
 		get_lecture();
 	}
+
 
 	function get_lecture(){
 		$http({
@@ -216,20 +297,29 @@ app.controller('lecture_ctrl', function($scope, $http){
 		}).success( function(data){
 			$scope.content = data.content.detial;
 			$scope.loading = false;
-			contents.lecture = $scope.content;
+			data.expires = new Date().getTime() + 360000;
+			localStorage.lecture = JSON.stringify( data );
 		});
 	}
 });
 
 app.controller('gpa_ctrl', function($scope, $http){
-	if(contents.gpa){
-		$scope.main_info = contents.gpa.main_info;
-		$scope.content = contents.gpa.content;
-	}else{
-		$scope.loading = true;
-		get_gpa();
-	}
+	
+	set_gpa();
 
+	function set_gpa(){
+		if( localStorage.gpa ){
+			var gpa = JSON.parse( localStorage.gpa );
+			if( new Date().getTime() < gpa.expires){
+				$scope.content = gpa.content;
+				console.log("没过期");
+				return 0;
+			}
+		}
+
+		$scope.loading = true;
+		get_gpa();	
+	}
 
 	function get_gpa(){
 		$http({
@@ -251,20 +341,34 @@ app.controller('gpa_ctrl', function($scope, $http){
 
 			$scope.content = content;
 			$scope.loading = false;
-			contents.gpa = {};
-			contents.gpa.content = content;
-			contents.gpa.main_info = content;
+			var tmp ={
+					"content": content,
+					"main_info": $scope.main_info,
+					"expires": new Date().getTime() + 86400000
+			};
+
+			localStorage.gpa = JSON.stringify( tmp );
 		});
 	}
 });
 
 
 app.controller('card_ctrl', function($scope, $http){
-	if(contents.card){
-		$scope.content = contents.card;
-	}else{
+
+	set_card();
+
+	function set_card(){
+		if( localStorage.card ){
+			var card = JSON.parse( localStorage.card );
+			if( new Date().getTime() < card.expires){
+				$scope.content = card.content;
+				console.log("没过期");
+				return 0;
+			}
+		}
+
 		$scope.loading = true;
-		get_card();
+		get_card();	
 	}
 
 	function get_card(){
@@ -277,7 +381,8 @@ app.controller('card_ctrl', function($scope, $http){
 		}).success( function(data){
 			$scope.content = data.content;
 			$scope.loading = false;
-			contents.card = data.content;
+			data.expires = new Date().getTime() + 3600000;
+			localStorage.card = JSON.stringify( data );
 		});
 	}
 });
@@ -285,11 +390,21 @@ app.controller('card_ctrl', function($scope, $http){
 
 
 app.controller('schoolbus_ctrl', function($scope, $http){
-	if(contents.schoolbus){
-		$scope.content = contents.schoolbus;
-	}else{
+	
+	set_schoolbus();
+
+	function set_schoolbus(){
+		if( localStorage.schoolbus ){
+			var schoolbus = JSON.parse( localStorage.schoolbus );
+			if( new Date().getTime() < schoolbus.expires){
+				$scope.content = schoolbus.content;
+				console.log("没过期");
+				return 0;
+			}
+		}
+
 		$scope.loading = true;
-		get_schoolbus();
+		get_schoolbus();	
 	}
 
 	function get_schoolbus(){
@@ -302,15 +417,26 @@ app.controller('schoolbus_ctrl', function($scope, $http){
 		}).success( function(data){
 			$scope.content = data.content;
 			$scope.loading = false;
-			contents.schoolbus = data.content;
+			data.expires = new Date().getTime() + 2592000000;
+			localStorage.schoolbus = JSON.stringify( data );
 		});
 	}
 });
 
 app.controller('exam_ctrl', function($scope, $http){
-	if(contents.exam){
-		$scope.content = contents.exam;
-	}else{
+	
+	set_exam();
+
+	function set_exam(){
+		if( localStorage.exam ){
+			var exam = JSON.parse( localStorage.exam );
+			if( new Date().getTime() < exam.expires){
+				$scope.content = exam.content;
+				console.log("没过期");
+				return 0;
+			}
+		}
+
 		$scope.loading = true;
 		get_exam();
 	}
@@ -322,18 +448,29 @@ app.controller('exam_ctrl', function($scope, $http){
 			data:{
 				"uuid": uuid
 			}
-		}).success( function(data){  
-			$scope.content = data;
+		}).success( function(data){
+			$scope.content = data.content;
 			$scope.loading = false;
-			contents.exam = data;
+			data.expires = new Date().getTime() + 2592000000;
+			localStorage.exam = JSON.stringify( data );
 		});
 	}
 });
 
 app.controller('library_ctrl', function($scope, $http, $mdToast){
-	if(contents.library){
-		$scope.content = contents.library;
-	}else{
+	
+	set_library();
+
+	function set_library(){
+		if( localStorage.library ){
+			var library = JSON.parse( localStorage.library );
+			if( new Date().getTime() < library.expires){
+				$scope.content = library.content;
+				console.log("没过期");
+				return 0;
+			}
+		}
+
 		$scope.loading = true;
 		get_library();
 	}
@@ -346,10 +483,10 @@ app.controller('library_ctrl', function($scope, $http, $mdToast){
 				"uuid": uuid
 			}
 		}).success( function(data){
-			
 			$scope.content = data.content;
 			$scope.loading = false;
-			contents.library = data.content;
+			data.expires = new Date().getTime() + 3600000;
+			localStorage.library = JSON.stringify( data );
 		});
 	}
 
