@@ -2,6 +2,10 @@ body, html{
 	height: 100%;
 }
 
+body{
+	min-width: 600px;
+}
+
 .top-nav{
 	position: fixed;
 	width: 100%;
