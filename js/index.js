@@ -1,5 +1,5 @@
-const ipc = require('electron').ipcRenderer;
-const remote = require('electron').remote;
+// const ipc = require('electron').ipcRenderer;
+// const remote = require('electron').remote;
 
 var app = angular.module('app',['ngMaterial', 'ui.router', 'ngAnimate']);
 var uuid = localStorage.uuid;

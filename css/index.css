@@ -10,6 +10,7 @@ body, html{
 	background-color: #00afff;
 	box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
 	z-index: 99;
+	-webkit-app-region: drag;
 }
 
 .brand-name,
@@ -22,6 +23,7 @@ body, html{
 	height: 40px;
 	line-height: 35px;
 	outline: none;
+	-webkit-app-region: no-drag;
 }
 
 .refresh-button{
@@ -32,6 +34,7 @@ body, html{
 	text-align: center;
 	cursor: pointer;
 	outline: none;
+	-webkit-app-region: no-drag;
 }
 
 .refresh-button:hover{
@@ -108,6 +111,25 @@ body, html{
 	right: 0;
 	color: #6d6d6d;
 	overflow-y: scroll;
+}
+
+.content-area::-webkit-scrollbar{
+    width: 10px;
+}
+
+
+.content-area::-webkit-scrollbar-track{
+	display: none;
+}
+
+.content-area::-webkit-scrollbar-thumb{
+    border-radius: 10px;
+    box-shadow: 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+}
+
+.content-area::-webkit-scrollbar-thumb:hover{
+	background-color: #888;
 }
 
 .content-container{

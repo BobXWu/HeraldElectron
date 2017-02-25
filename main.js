@@ -17,9 +17,9 @@ global.sharedObject = {
 };
 
 function createLoginWindow(){
-  loginWindow = new BrowserWindow({width: 300, height: 450, show: false, frame: false})
+  loginWindow = new BrowserWindow({width: 300, height: 450, show: false, frame: false,  resizable: false})
   loginWindow.loadURL(`file://${__dirname}/html/login.html`)
-  loginWindow.webContents.openDevTools()
+  // loginWindow.webContents.openDevTools()
  
   var template = []
 
@@ -37,7 +37,7 @@ function createLoginWindow(){
 
 function createMainWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600, frame: false, show:true})
+  mainWindow = new BrowserWindow({width: 800, height: 600, frame: false, show: false})
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/html/index.html`)
@@ -54,7 +54,7 @@ function createMainWindow () {
   })
 
   mainWindow.once('ready-to-show', function(){
-    mainWindow.webContents.send('stopLoadingGif')
+    loginWindow.close()
   })
 
 }
@@ -64,14 +64,13 @@ function createPageWindow(){
 
   var url = global.sharedObject.huodong_url
   pageWindow.loadURL( url )
-  mainWindow.webContents.openDevTools()
 
   pageWindow.on('closed', function(){
     pageWindow = null
   })
 
   pageWindow.once('ready-to-show', function(){
-    pageWindow.webContents.send('stopLoadingGif')//通知web页面关闭加载动画
+    
   })
 }
 
@@ -100,7 +99,6 @@ app.on('activate', function () {
 
 //关闭登录窗口并打开主窗口
 ipc.on('createMainWindow', function(){
-  loginWindow.close()
   createMainWindow()
 })
 
@@ -123,7 +121,7 @@ ipc.on('closeMainWindow', function(){
   mainWindow.close()
 })
 
-//回到主窗口
+//回到登录窗口
 ipc.on('backToLoginWindow', function(){
   mainWindow.close();
   createLoginWindow();
