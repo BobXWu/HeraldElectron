@@ -20,12 +20,28 @@ login_app.config(function($httpProvider){
 
 login_app.controller("login_ctrl", function($scope, $http, $window, $mdToast){
 
+	//已经登录过
+	if( localStorage.uuid ){
+		console.log("已经登录过");
+		$scope.has_loggedin = true;
+		$scope.last_cardnum = localStorage.cardnum;
+	}
+
 	$scope.login_click = function(){
 		//检查cardnum 和 password合法性
 		$scope.loading = true;
 		get_uuid($scope.cardnum, $scope.password);
 	}
 	
+	$scope.confirm_login_click = function(){
+		$scope.loading = true;
+		ipc.send("closeLoginWindow");
+	}
+
+	$scope.change_user = function(){
+		$scope.has_loggedin = false;
+	}
+
 	$scope.close_click = function(){
 		ipc.send("closeLoginWindow");
 	}
@@ -56,12 +72,12 @@ login_app.controller("login_ctrl", function($scope, $http, $window, $mdToast){
 			},
 			timeout: 3000
 		}).success( function(data){
-			console.log(data);
-			if( localStorage.uuid ){
+
+			if( localStorage.uuid !=data ){
 				localStorage.clear();
+				localStorage.uuid = data;
 			}
 
-			localStorage.uuid = data;
 			// $window.location.href = "index.html";
 			ipc.send("createMainWindow");
 		}).error(function(data,status) {

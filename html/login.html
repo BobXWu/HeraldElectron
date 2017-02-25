@@ -18,7 +18,8 @@
 			</div>
 		</div>
 		<img class="brand-pic" src="../res/image/80.png" alt="">
-		<div class="login-container" layout="column">
+
+		<div ng-if="!has_loggedin" class="login-container scale-fade" layout="column">
 			<md-input-container>
 				<label>一卡通号</label>
 				<input maxlength="9" required ng-model="cardnum.content">
@@ -29,6 +30,15 @@
 			</md-input-container>
 			<md-button class="login-button md-raised md-primary" ng-click="login_click()">登录</md-button>
 		</div>
+
+		<div class="has-loggin-container" ng-if="has_loggedin">
+			<div class="last-cardnum">{{last_cardnum}}</div>
+			<md-button class="login-button md-raised md-primary" ng-click="confirm_login_click()">
+				确认登录
+			</md-button>
+			<div ng-click="change_user()">切换账号</div>
+		</div>
+
 		<div ng-init="loading=false" ng-if='loading' class="progress-circular-bk">
 			<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 		</div>

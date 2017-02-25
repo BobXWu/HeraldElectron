@@ -1,0 +1,36 @@
+<div ng-controller="library_ctrl">
+	<div ng-if='loading' class="progress-circular-bk">
+		<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+	</div>
+	<div class="content-container"  ng-if='!loading'>
+		<md-tabs md-dynamic-height md-border-bottom>
+			<md-tab label="借阅情况">
+				<md-content class="md-padding">
+					<md-list>
+						<md-title>我借阅的图书：</md-title>
+						<md-list-item ng-repeat="x in content">
+							<div class="md-list-item-text">
+								<div class="left">
+									<div class="top-font">{{x.title}}</div>
+									<div class="bottom-font">{{x.author}}</div>
+									<div class="bottom-font">{{x.index}}</div>
+									<div class="bottom-font">{{x.place}} 续借过{{x.renew_time}}次</div>
+								</div>
+								<div class="right">
+									<div class="top-font">{{x.due_date}} 到期</div>
+									<md-button ng-if="x.renew_time==0">续借</md-button>
+								</div>
+							</div>
+							<md-divider ng-if="!$last"></md-divider>
+						</md-list-item>
+						<div class="ifnull" ng-if="!content.length">暂无记录</div>
+					</md-list>
+				</md-content>
+			</md-tab>
+			<md-tab label="图书查询">
+				
+			</md-tab>
+		</md-tabs>
+		
+	</div>
+</div>

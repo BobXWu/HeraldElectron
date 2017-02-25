@@ -1,0 +1,27 @@
+<div ng-controller="huodong_ctrl">
+	<div ng-if='loading' class="progress-circular-bk">
+		<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+	</div>
+	<div class="content-container">
+		<md-list ng-if='content.length'>
+			<md-list-item ng-repeat="x in content">
+				<md-card class="huodong-card" ng-show="!loading" class="scale-fade">
+					<div ng-click="open_huodong(x.detail_url)" href="{{x.detail_url}}" target="_blank">
+						<div class="md-list-item-text">
+							<div class="top-font">{{x.title}}</div>
+							<div class="bottom-font">{{x.association}}</div>
+						</div>
+						<div style="width: 100%">
+								<img style="display:block;width: 100%" src="{{x.pic_url}}" alt="">
+						</div>
+						<div class="md-list-item-text">
+							<div class="bottom-font">活动时间：{{x.activity_time}}</div>
+							<div class="bottom-font">活动地点：{{x.location}}</div>
+							<div class="bottom-font">{{x.introduction}}</div>
+						</div>
+					</div>	
+				</md-card>
+			</md-list-item>
+		</md-list>
+	</div>
+</div>

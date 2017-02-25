@@ -4,8 +4,8 @@
 	</div>
 	<div class="content-container">
 		<md-list ng-if='content.length'>
-			<md-list-item  ng-repeat="x in content">
-				<md-card  ng-show="!loading" class="scale-fade">
+			<md-list-item ng-repeat="x in content">
+				<md-card class="huodong-card" ng-show="!loading" class="scale-fade">
 					<div ng-click="open_huodong(x.detail_url)" href="{{x.detail_url}}" target="_blank">
 						<div class="md-list-item-text">
 							<div class="top-font">{{x.title}}</div>
@@ -23,7 +23,5 @@
 				</md-card>
 			</md-list-item>
 		</md-list>
-	</div>
-
 	</div>
 </div>

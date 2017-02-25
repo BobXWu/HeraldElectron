@@ -1,8 +1,6 @@
 const ipc = require('electron').ipcRenderer;
 const remote = require('electron').remote;
 
-// const uuid = "87291a4edb373dd82a5f11bdd5f81ab30cb83445";
-
 var app = angular.module('app',['ngMaterial', 'ui.router', 'ngAnimate']);
 var uuid = localStorage.uuid;
 
@@ -24,7 +22,7 @@ app.config(function($httpProvider){
 
 app.config(function($stateProvider){
 	$stateProvider
-	.state('home', {
+	.state('main', {
 		url: '/:name',
 		templateUrl: function($stateParams){
 			// if ($stateParams.name==""){
@@ -38,18 +36,12 @@ app.config(function($stateProvider){
 	});
 });
 
-app.controller('top_nav_ctrl', function($scope){
-	$scope.close_click = function(){
-		console.log("close main window");
-		ipc.send('closeMainWindow');
-	}
-});
+app.controller('main_ctrl', function($scope, $location){
 
-app.controller('side_nav_ctrl', function($scope, $location){
-	
 	$location.path("home");
 	$scope.active_name = "home";
-	$scope.items = [{
+	$scope.items = [
+		{
 			"name_en": "home",
 			"name_zh": "主页"
 		},
@@ -86,15 +78,102 @@ app.controller('side_nav_ctrl', function($scope, $location){
 		}
 	];
 
+	if( localStorage.cardnum ){
+		get_personal_info();
+	}
+
 	$scope.change_item = function(index){
 		$scope.active_name = $scope.items[index].name_en;
 	}
+
+	$scope.close_click = function(){
+		console.log("close main window");
+		ipc.send('closeMainWindow');
+	}
+
+	$scope.refresh_click = function(){
+		console.log("refresh_click");
+		$scope.$broadcast('refresh');
+	}
+
+	function get_personal_info(){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/api/user',
+			data:{
+				"uuid": uuid
+			}
+		}).success( function(data){
+			localStorage.cardnum = JSON.stringify(data.content.cardnum);
+		});
+	}
 });
+
+// app.controller('top_nav_ctrl', function($scope){
+// 	$scope.close_click = function(){
+// 		console.log("close main window");
+// 		ipc.send('closeMainWindow');
+// 	}
+// });
+
+// app.controller('side_nav_ctrl', function($scope, $location){
+	
+// 	$location.path("home");
+// 	$scope.active_name = "home";
+// 	$scope.items = [{
+// 			"name_en": "home",
+// 			"name_zh": "主页"
+// 		},
+// 		{
+// 			"name_en": "huodong",
+// 			"name_zh": "活动"
+// 		},{
+// 			"name_en": "gpa",
+// 			"name_zh": "绩点"
+// 		},{
+// 			"name_en": "srtp",
+// 			"name_zh": "SRTP"
+// 		},{
+// 			"name_en": "lecture",
+// 			"name_zh": "人文讲座"
+// 		},{
+// 			"name_en": "card",
+// 			"name_zh": "一卡通余额"
+// 		},{
+// 			"name_en": "library",
+// 			"name_zh": "图书馆"
+// 		},{
+// 			"name_en": "jwc",
+// 			"name_zh": "教务处"
+// 		},{
+// 			"name_en": "schoolbus",
+// 			"name_zh": "校车"
+// 		},{
+// 			"name_en": "phylab",
+// 			"name_zh": "物理实验课程"
+// 		},{
+// 			"name_en": "exam",
+// 			"name_zh": "考试安排"
+// 		}
+// 	];
+
+// 	$scope.change_item = function(index){
+// 		$scope.active_name = $scope.items[index].name_en;
+// 	}
+// });
 
 app.controller('home_ctrl', function($scope, $http){
 
 	set_pe();
 	set_nic();
+
+	$scope.$on("refresh", function(){
+		console.log("refresh");
+		$scope.pe_loading = true;
+		$scope.nic_loading = true;
+		get_pe();
+		get_nic();
+	});
 
 	function set_pe(){
 		if(localStorage.pe){
@@ -124,7 +203,6 @@ app.controller('home_ctrl', function($scope, $http){
 		get_nic();
 	}
 
-
 	function get_pe(){
 		$http({
 			method:'post', 
@@ -138,6 +216,11 @@ app.controller('home_ctrl', function($scope, $http){
 			data.expires = new Date().getTime() + 3600000;
 			localStorage.pe = JSON.stringify(data);
 			console.log( data );
+		}).error( function(data, status){
+			if( status == "401" ){
+				localStorage.clear();
+				ipc.send("BackToLoginWindow");
+			}
 		});
 	}
 
@@ -153,6 +236,11 @@ app.controller('home_ctrl', function($scope, $http){
 			$scope.nic_loading = false;
 			data.expires = new Date().getTime() + 3600000;
 			localStorage.nic = JSON.stringify(data);
+		}).error( function(data, status){
+			if( status == "401"){
+				localStorage.clear();
+				ipc.send("createLoginWindow");
+			}
 		});
 	}
 
@@ -162,6 +250,11 @@ app.controller('home_ctrl', function($scope, $http){
 app.controller('huodong_ctrl', function($scope, $http, $timeout){
 	
 	set_huodong();
+	$scope.$on("refresh", function(){
+		console.log("huodong  refresh");
+		$scope.loading = true;
+		get_huodong();
+	});
 
 	function set_huodong(){
 		if( localStorage.huodong ){
@@ -219,6 +312,12 @@ app.controller('phylab_ctrl', function($scope, $http){
 	
 	set_phylab();
 
+	$scope.$on("refresh", function(){
+		console.log("phylab  refresh");
+		$scope.loading = true;
+		get_phylab();
+	});
+
 	function set_phylab(){
 		if(localStorage.phylab){
 			var phylab = JSON.parse( localStorage.phylab );
@@ -254,6 +353,12 @@ app.controller('phylab_ctrl', function($scope, $http){
 app.controller('jwc_ctrl', function($scope, $http){
 
 	set_jwc();
+
+	$scope.$on("refresh", function(){
+		console.log("jwc  refresh");
+		$scope.loading = true;
+		get_jwc();
+	});
 
 	function set_jwc(){
 		if(localStorage.jwc){
@@ -291,6 +396,12 @@ app.controller('jwc_ctrl', function($scope, $http){
 app.controller('srtp_ctrl', function($scope, $http){
 	
 	set_srtp();
+
+	$scope.$on("refresh", function(){
+		console.log("srtp  refresh");
+		$scope.loading = true;
+		get_srtp();
+	});
 
 	function set_srtp(){
 		if(localStorage.srtp){
@@ -330,6 +441,12 @@ app.controller('lecture_ctrl', function($scope, $http){
 	
 	set_lecture();
 
+	$scope.$on("refresh", function(){
+		console.log("lecture  refresh");
+		$scope.loading = true;
+		get_lecture();
+	});
+
 	function set_lecture(){
 		if( localStorage.lecture ){
 			var lecture = JSON.parse( localStorage.lecture );
@@ -363,6 +480,12 @@ app.controller('lecture_ctrl', function($scope, $http){
 app.controller('gpa_ctrl', function($scope, $http){
 	
 	set_gpa();
+
+	$scope.$on("refresh", function(){
+		console.log("gpa  refresh");
+		$scope.loading = true;
+		get_gpa();
+	});
 
 	function set_gpa(){
 		if( localStorage.gpa ){
@@ -414,6 +537,12 @@ app.controller('card_ctrl', function($scope, $http){
 
 	set_card();
 
+	$scope.$on("refresh", function(){
+		console.log("card  refresh");
+		$scope.loading = true;
+		get_card();
+	});
+
 	function set_card(){
 		if( localStorage.card ){
 			var card = JSON.parse( localStorage.card );
@@ -450,6 +579,12 @@ app.controller('schoolbus_ctrl', function($scope, $http){
 	
 	set_schoolbus();
 
+	$scope.$on("refresh", function(){
+		console.log("schoolbus  refresh");
+		$scope.loading = true;
+		get_schoolbus();
+	});
+
 	function set_schoolbus(){
 		if( localStorage.schoolbus ){
 			var schoolbus = JSON.parse( localStorage.schoolbus );
@@ -483,6 +618,11 @@ app.controller('schoolbus_ctrl', function($scope, $http){
 app.controller('exam_ctrl', function($scope, $http){
 	
 	set_exam();
+	$scope.$on("refresh", function(){
+		console.log("exam  refresh");
+		$scope.loading = true;
+		get_exam();
+	});
 
 	function set_exam(){
 		if( localStorage.exam ){
@@ -517,6 +657,11 @@ app.controller('exam_ctrl', function($scope, $http){
 app.controller('library_ctrl', function($scope, $http){
 	
 	set_library();
+	$scope.$on("refresh", function(){
+		console.log("library  refresh");
+		$scope.loading = true;
+		get_library();
+	});
 
 	function set_library(){
 		if( localStorage.library ){

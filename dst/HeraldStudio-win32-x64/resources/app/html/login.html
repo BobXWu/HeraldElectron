@@ -1,0 +1,58 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+	<title>小猴偷米</title>
+	<link rel="stylesheet" href="../css/3rd/angular-material.min.css">
+	<link rel="stylesheet" href="../css/3rd/ng-animation.css">
+	<link rel="stylesheet" href="../css/global.css">
+	<link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+	<div ng-app="login_app" ng-controller="login_ctrl" ng-cloak>
+		<div class="top-nav clearfix">
+			<div class="left brand-name"><span>小猴偷米</span></div>
+			<div ng-click="close_click()" class="right close-button">
+				<img src="../res/image/ic_close_black_18px.svg" alt="">
+			</div>
+		</div>
+		<img class="brand-pic" src="../res/image/80.png" alt="">
+
+		<div ng-if="!has_loggedin" class="login-container scale-fade" layout="column">
+			<md-input-container>
+				<label>一卡通号</label>
+				<input maxlength="9" required ng-model="cardnum.content">
+			</md-input-container>
+			<md-input-container>
+				<label>密码</label>
+				<input required ng-keydown="key_down($event)" type="password" ng-model="password">
+			</md-input-container>
+			<md-button class="login-button md-raised md-primary" ng-click="login_click()">登录</md-button>
+		</div>
+
+		<div class="has-loggin-container" ng-if="has_loggedin">
+			<div class="last-cardnum">{{last_cardnum}}</div>
+			<md-button class="login-button md-raised md-primary" ng-click="confirm_login_click()">
+				确认登录
+			</md-button>
+			<div ng-click="change_user()">切换账号</div>
+		</div>
+
+		<div ng-init="loading=false" ng-if='loading' class="progress-circular-bk">
+			<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+		</div>
+	</div>
+	
+
+
+	<script>if (typeof module === 'object') {window.module = module; module = undefined;}
+	</script>
+	<script src="../js/3rd/angular.min.js"></script>
+	<script src="../js/3rd/angular-animate.min.js"></script>
+	<script src="../js/3rd/angular-aria.min.js"></script>
+	<script src="../js/3rd/angular-messages.min.js"></script>
+	<script src="../js/3rd/angular-material.min.js"></script>
+	<script src="../js/login.js"></script>
+</body>
+</html>

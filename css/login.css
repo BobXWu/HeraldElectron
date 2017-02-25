@@ -10,10 +10,11 @@ body{
 	background-color: #e84351;
 }
 
-.top-nav .right{
+.close-button{
 	width: 40px;
 	height: 40px;
 	line-height: 35px;
+	outline: none;
 }
 
 .close-button>img{
@@ -24,6 +25,10 @@ body{
 .brand-pic{
 	display: block;
 	margin: 30px auto 20px;
+}
+
+.has-loggin-container{
+	text-align: center;
 }
 
 md-input-container{

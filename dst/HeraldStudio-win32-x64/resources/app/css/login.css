@@ -1,0 +1,63 @@
+body{
+	background-color: #f5f5f5;
+}
+
+.top-nav .left{
+	padding: 14px 5px 5px 17px;
+}
+
+.close-button:hover{
+	background-color: #e84351;
+}
+
+.close-button{
+	width: 40px;
+	height: 40px;
+	line-height: 35px;
+	outline: none;
+}
+
+.close-button>img{
+	margin-left: 5px;
+	vertical-align: bottom;
+}
+
+.brand-pic{
+	display: block;
+	margin: 30px auto 20px;
+}
+
+.has-loggin-container{
+	text-align: center;
+}
+
+md-input-container{
+	width: 80%;
+	max-width: 300px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.login-button{
+	width: 35%;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 150px;
+	color: white;
+	background-color: #00afff !important;
+}
+
+.progress-circular-bk{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 99;
+}
+
+.progress-circular-bk>md-progress-circular{
+	margin-left: auto;
+	margin-right: auto;
+	top: 200px;
+}

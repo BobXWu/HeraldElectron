@@ -10,30 +10,25 @@
 	<link rel="stylesheet" href="../css/index.css">
 </head>
 <body>
-	<div ng-app="app" ng-cloak>
+	<div ng-app="app" ng-cloak ng-controller="main_ctrl">
 		<!-- 顶部栏 -->
-		<div class="top-nav clearfix" ng-controller="top_nav_ctrl">
-			<!-- <div class=""> -->
-				<div class="left brand-pic">
-					<img src="../res/image/40.png" alt="">
-				</div>
-				<div class="left brand-name">
-					&nbsp;&nbsp;&nbsp;小猴偷米
-				</div>
-				<!-- <div class="clearfix"> -->
-					<!-- <div class="right"> -->
-						<div ng-click="close_click()" class="right close-button">
-							<img src="../res/image/ic_close_black_18px.svg" alt="">
-						</div>
-
-					<!-- </div> -->
-				<!-- </div> -->
-	
-			<!-- </div> -->
+		<div class="top-nav clearfix"">
+			<div class="left brand-pic">
+				<img src="../res/image/40.png" alt="">
+			</div>
+			<div class="left brand-name">
+				&nbsp;&nbsp;&nbsp;小猴偷米
+			</div>
+			<div ng-click="refresh_click()" class="left refresh-button">
+				<img src="../res/image/ic_refresh_white_24px.svg" alt="">
+			</div>
+			<div ng-click="close_click()" class="right close-button">
+				<img src="../res/image/ic_close_white_18px.svg" alt="">
+			</div>
 		</div>
 
 		<!-- 左侧导航栏 -->
-		<div class="side-nav left" ng-controller="side_nav_ctrl">
+		<div class="side-nav left">
 			<ul class="side-nav-list">
 				<li ng-repeat="x in items"  ng-class="{true:'active', false:''}[x.name_en==active_name]" ng-click="change_item($index)"><a href="{{'#/' + x.name_en}}">
 					<img src="{{'../res/image/ic_' + x.name_en + '_invert.png'}}">&nbsp;&nbsp;{{x.name_zh}}</a>

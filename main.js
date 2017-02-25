@@ -123,3 +123,9 @@ ipc.on('closeMainWindow', function(){
   mainWindow.close()
 })
 
+//回到主窗口
+ipc.on('backToLoginWindow', function(){
+  mainWindow.close();
+  createLoginWindow();
+})
+
