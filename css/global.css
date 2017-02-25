@@ -33,3 +33,11 @@ ul{
 a{
 	text-decoration: none;
 }
+
+md-toast{
+	/*top: 15px;*/
+	max-width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}

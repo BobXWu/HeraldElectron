@@ -1,6 +1,6 @@
 const ipc = require('electron').ipcRenderer;
 
-var login_app = angular.module("login_app", ["ngMaterial", "ipCookie"])
+var login_app = angular.module("login_app", ["ngMaterial", "ngMessages"])
 
 login_app.config(function($httpProvider){  
 
@@ -18,21 +18,32 @@ login_app.config(function($httpProvider){
 
 });
 
-login_app.controller("login_ctrl", function($scope, $http, $window){
-
-	// if( localStorage.uuid ){
-	// 	ipc.send("createMainWindow");
-	// }
+login_app.controller("login_ctrl", function($scope, $http, $window, $mdToast){
 
 	$scope.login_click = function(){
 		//检查cardnum 和 password合法性
-		console.log("click");
+		$scope.loading = true;
 		get_uuid($scope.cardnum, $scope.password);
 	}
 	
 	$scope.close_click = function(){
 		ipc.send("closeLoginWindow");
 	}
+
+	$scope.key_down = function(e){
+		if(e.keyCode == 13){
+			$scope.login_click();
+		}
+	}
+
+	$scope.showSimpleToast = function(text) {
+		$mdToast.show(
+			$mdToast.simple()
+				.textContent(text)
+				.position( "top" )
+				.hideDelay(1500)
+		);
+	};
 
 	function get_uuid(user, password){
 		$http({
@@ -42,9 +53,9 @@ login_app.controller("login_ctrl", function($scope, $http, $window){
 				'user': user,
 				'password': password,
 				'appid': '34cc6df78cfa7cd457284e4fc377559e'
-			}
+			},
+			timeout: 3000
 		}).success( function(data){
-
 			console.log(data);
 			if( localStorage.uuid ){
 				localStorage.clear();
@@ -53,13 +64,16 @@ login_app.controller("login_ctrl", function($scope, $http, $window){
 			localStorage.uuid = data;
 			// $window.location.href = "index.html";
 			ipc.send("createMainWindow");
-			
 		}).error(function(data,status) {
-			console.log(data);
-			console.log(status);
-			if(status == "401"){
-
+			var text;
+			if( status == "401" ){
+				text = "一卡通号或密码错误";
+			}else if(status == "504" || status == '-1'){
+				text = "连接失败，请检查网络后再试";
 			}
+			
+			$scope.loading = false;
+			$scope.showSimpleToast(text);
 		});
 	}
 });

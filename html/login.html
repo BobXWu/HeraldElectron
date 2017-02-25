@@ -21,26 +21,28 @@
 		<div class="login-container" layout="column">
 			<md-input-container>
 				<label>一卡通号</label>
-				<input ng-model="cardnum">
+				<input maxlength="9" required ng-model="cardnum.content">
 			</md-input-container>
 			<md-input-container>
 				<label>密码</label>
-				<input ng-keydown="key_down()" type="password" ng-model="password">
+				<input required ng-keydown="key_down($event)" type="password" ng-model="password">
 			</md-input-container>
 			<md-button class="login-button md-raised md-primary" ng-click="login_click()">登录</md-button>
 		</div>
-
+		<div ng-init="loading=false" ng-if='loading' class="progress-circular-bk">
+			<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+		</div>
 	</div>
+	
+
 
 	<script>if (typeof module === 'object') {window.module = module; module = undefined;}
 	</script>
 	<script src="../js/3rd/angular.min.js"></script>
-	<script src="../js/3rd/angular-ui-router.js"></script>
 	<script src="../js/3rd/angular-animate.min.js"></script>
 	<script src="../js/3rd/angular-aria.min.js"></script>
 	<script src="../js/3rd/angular-messages.min.js"></script>
 	<script src="../js/3rd/angular-material.min.js"></script>
-	<script src="http://cdn.bootcss.com/angular-cookie/4.1.0/angular-cookie.min.js"></script>
 	<script src="../js/login.js"></script>
 </body>
 </html>

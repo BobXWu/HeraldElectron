@@ -41,3 +41,18 @@ md-input-container{
 	color: white;
 	background-color: #00afff !important;
 }
+
+.progress-circular-bk{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 99;
+}
+
+.progress-circular-bk>md-progress-circular{
+	margin-left: auto;
+	margin-right: auto;
+	top: 200px;
+}

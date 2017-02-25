@@ -46,9 +46,9 @@ app.controller('top_nav_ctrl', function($scope){
 });
 
 app.controller('side_nav_ctrl', function($scope, $location){
-	// $location.path("home");
+	
+	$location.path("home");
 	$scope.active_name = "home";
-
 	$scope.items = [{
 			"name_en": "home",
 			"name_zh": "主页"
@@ -514,7 +514,7 @@ app.controller('exam_ctrl', function($scope, $http){
 	}
 });
 
-app.controller('library_ctrl', function($scope, $http, $mdToast){
+app.controller('library_ctrl', function($scope, $http){
 	
 	set_library();
 

@@ -19,7 +19,7 @@ global.sharedObject = {
 function createLoginWindow(){
   loginWindow = new BrowserWindow({width: 300, height: 450, show: false, frame: false})
   loginWindow.loadURL(`file://${__dirname}/html/login.html`)
-  // loginWindow.webContents.openDevTools()
+  loginWindow.webContents.openDevTools()
  
   var template = []
 
