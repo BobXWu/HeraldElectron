@@ -13,7 +13,7 @@ let mainWindow  //主窗口
 let pageWindow   //浏览其他web页面的窗口
 
 global.sharedObject = {
-  "huodong_url": ""
+  "page_url": ""
 };
 
 function createLoginWindow(){
@@ -25,7 +25,7 @@ function createLoginWindow(){
     resizable: true})
 
   loginWindow.loadURL(`file://${__dirname}/html/login.html`)
-  // loginWindow.webContents.openDevTools()
+  loginWindow.webContents.openDevTools()
  
   var template = []
 
@@ -44,9 +44,9 @@ function createLoginWindow(){
 function createMainWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
+    width: 1000,
     height: 600,
-    minWidth: 800,
+    minWidth: 1000,
     minHeight: 600,
     frame: false,
     show: false})
@@ -55,7 +55,7 @@ function createMainWindow () {
   mainWindow.loadURL(`file://${__dirname}/html/index.html`)
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -73,9 +73,15 @@ function createMainWindow () {
 }
 
 function createPageWindow(){
-  pageWindow = new BrowserWindow({width: 800, height: 600, parent: mainWindow, modal: true, show: false, frame: true})
+  pageWindow = new BrowserWindow({
+    width: 800, 
+    height: 600, 
+    parent: mainWindow, 
+    modal: true, 
+    show: true, 
+    frame: true})
 
-  var url = global.sharedObject.huodong_url
+  var url = global.sharedObject.page_url
   pageWindow.loadURL( url )
 
   pageWindow.on('closed', function(){
@@ -83,7 +89,7 @@ function createPageWindow(){
   })
 
   pageWindow.once('ready-to-show', function(){
-    pageWindow.show()
+    
   })
 }
 
@@ -137,6 +143,6 @@ ipc.on('closeMainWindow', function(){
 
 //回到登录窗口
 ipc.on('backToLoginWindow', function(){
-  mainWindow.close();
   createLoginWindow();
+  mainWindow.close();
 })

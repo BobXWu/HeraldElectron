@@ -164,9 +164,9 @@ app.controller('home_ctrl', function($scope, $http){
 			localStorage.pe = JSON.stringify(data);
 			console.log( data );
 		}).error( function(data, status){
+			console.log(status);
 			if( status == "401" ){
-				localStorage.clear();
-				ipc.send("BackToLoginWindow");
+				// showDialog("您似乎已经修改过密码，请重新登录");
 			}
 		});
 	}
@@ -184,13 +184,24 @@ app.controller('home_ctrl', function($scope, $http){
 			data.expires = new Date().getTime() + 3600000;
 			localStorage.nic = JSON.stringify(data);
 		}).error( function(data, status){
+			console.log(status);
 			if( status == "401"){
-				localStorage.clear();
-				ipc.send("createLoginWindow");
+				// showDialog("您似乎已经修改过密码，请重新登录");
 			}
 		});
 	}
 
+	// function showDialog(text){
+	// 	$mdDialog.show(
+	// 		$mdDialog.alert()
+	// 		.parent(angular.element(document.querySelector('body')))
+	// 		.clickOutsideToClose(false)
+	// 		.textContent(text)
+	// 		.ok('确定')
+	// 	).then(function(){
+	// 		ipc.send("backToLoginWindow");
+	// 	});
+	// }
 });
 
 //活动
@@ -246,9 +257,9 @@ app.controller('huodong_ctrl', function($scope, $http, $timeout){
 		return url.match('http://mmbiz.qpic.cn');
 	}
 
-	$scope.open_huodong = function(url){
+	$scope.open_url = function(url){
 		// require('electron').openExternal(url);
-		remote.getGlobal('sharedObject').huodong_url = url;
+		remote.getGlobal('sharedObject').page_url = url;
 		ipc.send('createPageWindow');
 	}
 	
@@ -336,6 +347,11 @@ app.controller('jwc_ctrl', function($scope, $http){
 			data.expires = new Date().getTime() + 3600000;
 			localStorage.jwc = JSON.stringify(data);
 		});
+	}
+
+	$scope.open_url = function(url){
+		remote.getGlobal('sharedObject').page_url = url;
+		ipc.send('createPageWindow');
 	}
 
 });
