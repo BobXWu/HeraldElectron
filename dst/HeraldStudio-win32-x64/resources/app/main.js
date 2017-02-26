@@ -3,23 +3,29 @@ const electron = require('electron')
 const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
-const ipc = electron.ipcMain;
-const Menu = electron.Menu;
+const ipc = electron.ipcMain
+const Menu = electron.Menu
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let loginWindow; //登录窗口
-let mainWindow;  //主窗口
-let pageWindow;   //浏览其他web页面的窗口
+let loginWindow //登录窗口
+let mainWindow  //主窗口
+let pageWindow   //浏览其他web页面的窗口
 
 global.sharedObject = {
   "huodong_url": ""
 };
 
 function createLoginWindow(){
-  loginWindow = new BrowserWindow({width: 300, height: 450, show: false, frame: false})
+  loginWindow = new BrowserWindow({
+    width: 300,
+    height: 450,
+    show: false,
+    frame: false,
+    resizable: true})
+
   loginWindow.loadURL(`file://${__dirname}/html/login.html`)
-  loginWindow.webContents.openDevTools()
+  // loginWindow.webContents.openDevTools()
  
   var template = []
 
@@ -37,13 +43,19 @@ function createLoginWindow(){
 
 function createMainWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600, frame: false, show:true})
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    minWidth: 800,
+    minHeight: 600,
+    frame: false,
+    show: false})
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/html/index.html`)
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -54,24 +66,24 @@ function createMainWindow () {
   })
 
   mainWindow.once('ready-to-show', function(){
-    mainWindow.webContents.send('stopLoadingGif')
+    mainWindow.show();
+    loginWindow.close()
   })
 
 }
 
 function createPageWindow(){
-  pageWindow = new BrowserWindow({width: 800, height: 600, parent: mainWindow, modal: true, show: true, frame: true})
+  pageWindow = new BrowserWindow({width: 800, height: 600, parent: mainWindow, modal: true, show: false, frame: true})
 
   var url = global.sharedObject.huodong_url
   pageWindow.loadURL( url )
-  mainWindow.webContents.openDevTools()
 
   pageWindow.on('closed', function(){
     pageWindow = null
   })
 
   pageWindow.once('ready-to-show', function(){
-    pageWindow.webContents.send('stopLoadingGif')//通知web页面关闭加载动画
+    pageWindow.show()
   })
 }
 
@@ -100,8 +112,8 @@ app.on('activate', function () {
 
 //关闭登录窗口并打开主窗口
 ipc.on('createMainWindow', function(){
-  loginWindow.close()
   createMainWindow()
+  // loginWindow.close()
 })
 
 //打开新web浏览页面
@@ -123,9 +135,8 @@ ipc.on('closeMainWindow', function(){
   mainWindow.close()
 })
 
-//回到主窗口
+//回到登录窗口
 ipc.on('backToLoginWindow', function(){
   mainWindow.close();
   createLoginWindow();
 })
-

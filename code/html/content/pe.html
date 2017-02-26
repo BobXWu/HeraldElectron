@@ -1,0 +1,16 @@
+<div ng-controller="pe_ctrl">
+	<div ng-if='loading' class="progress-circular-bk">
+		<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+	</div>
+	<div class="content-container clearfix"  ng-if='!loading'>
+		<div class="left">
+			<h1>{{pe_count}}</h1>
+			<h4>跑操次数</h4>
+		</div>
+		<div class="right">
+			<h1>{{left_days}}</h1>	
+			<h4>剩余天数</h4>
+		</div>	
+	</div>
+
+</div>

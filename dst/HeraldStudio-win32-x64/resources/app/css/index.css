@@ -2,6 +2,10 @@ body, html{
 	height: 100%;
 }
 
+body, html{
+	min-width: 600px;
+}
+
 .top-nav{
 	position: fixed;
 	width: 100%;
@@ -10,6 +14,7 @@ body, html{
 	background-color: #00afff;
 	box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.50);
 	z-index: 99;
+	-webkit-app-region: drag;
 }
 
 .brand-name,
@@ -22,6 +27,7 @@ body, html{
 	height: 40px;
 	line-height: 35px;
 	outline: none;
+	-webkit-app-region: no-drag;
 }
 
 .refresh-button{
@@ -32,6 +38,7 @@ body, html{
 	text-align: center;
 	cursor: pointer;
 	outline: none;
+	-webkit-app-region: no-drag;
 }
 
 .refresh-button:hover{
@@ -84,6 +91,7 @@ body, html{
 	padding: 5px 20px;
 	color: #6d6d6d;
 	cursor: pointer;
+	transition: background-color .8s;
 }
 
 .side-nav-list img{
@@ -93,7 +101,7 @@ body, html{
 .side-nav-list>li:hover{
 	background-color: #e4e4e4;
 	box-shadow: 
-	transition: background-color .5s;
+	
 }
 
 .side-nav-list>li.active{
@@ -108,6 +116,25 @@ body, html{
 	right: 0;
 	color: #6d6d6d;
 	overflow-y: scroll;
+}
+
+.content-area::-webkit-scrollbar{
+    width: 10px;
+}
+
+.content-area::-webkit-scrollbar-track{
+	display: none;
+}
+
+.content-area::-webkit-scrollbar-thumb{
+    border-radius: 10px;
+    box-shadow: 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+
+}
+
+.content-area::-webkit-scrollbar-thumb:hover{
+	background-color: #888;
 }
 
 .content-container{
@@ -142,7 +169,8 @@ body, html{
 	color: #6d6d6d;
 }
 
-.content-container .ifnull{
+.ifnull{
+	margin-top: 30px;
 	font-size: 20px;
 	text-align: center;
 }
@@ -203,11 +231,29 @@ body, html{
 	cursor: pointer;
 }
 
+.home-card .remark{
+	font-size: 14px;
+}
+
 md-card-content .left,
 md-card-content .right{
 	width: 50%;
 }
 
-md-card-content .remark{
-	font-size: 4px;
+md-card-content
+.search-input-container{
+	width: 80%;
+	max-width: 600px;
+	margin-top: 30px;
+	float: right;
+}
+
+.search-input-container input{
+	width: 60%;
+	max-width: 400px;
+}
+
+.search-button{
+	margin: 0;
+	float: right;
 }

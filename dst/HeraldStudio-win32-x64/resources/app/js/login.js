@@ -19,23 +19,25 @@ login_app.config(function($httpProvider){
 });
 
 login_app.controller("login_ctrl", function($scope, $http, $window, $mdToast){
+	
+	$scope.input = {};
 
 	//已经登录过
 	if( localStorage.uuid ){
 		console.log("已经登录过");
 		$scope.has_loggedin = true;
-		$scope.last_cardnum = localStorage.cardnum;
+		$scope.input.last_cardnum = localStorage.cardnum;
 	}
 
 	$scope.login_click = function(){
 		//检查cardnum 和 password合法性
 		$scope.loading = true;
-		get_uuid($scope.cardnum, $scope.password);
+		get_uuid($scope.input.cardnum, $scope.input.password);
 	}
 	
 	$scope.confirm_login_click = function(){
 		$scope.loading = true;
-		ipc.send("closeLoginWindow");
+		ipc.send("createMainWindow");
 	}
 
 	$scope.change_user = function(){
@@ -47,7 +49,7 @@ login_app.controller("login_ctrl", function($scope, $http, $window, $mdToast){
 	}
 
 	$scope.key_down = function(e){
-		if(e.keyCode == 13){
+		if(!$scope.loading  && e.keyCode == 13){
 			$scope.login_click();
 		}
 	}
@@ -73,11 +75,11 @@ login_app.controller("login_ctrl", function($scope, $http, $window, $mdToast){
 			timeout: 3000
 		}).success( function(data){
 
-			if( localStorage.uuid !=data ){
+			if( localStorage.uuid && localStorage.uuid != data ){
 				localStorage.clear();
-				localStorage.uuid = data;
 			}
-
+			
+			localStorage.uuid = data;
 			// $window.location.href = "index.html";
 			ipc.send("createMainWindow");
 		}).error(function(data,status) {

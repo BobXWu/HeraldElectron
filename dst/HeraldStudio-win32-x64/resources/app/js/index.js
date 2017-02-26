@@ -12,7 +12,7 @@ app.config(function($httpProvider){
        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));  
      }  
      return str.join("&");  
-   }  
+   }
 
    $httpProvider.defaults.headers.post = {  
         'Content-Type': 'application/x-www-form-urlencoded'  
@@ -36,7 +36,7 @@ app.config(function($stateProvider){
 	});
 });
 
-app.controller('main_ctrl', function($scope, $location){
+app.controller('main_ctrl', function($scope, $http, $location){
 
 	$location.path("home");
 	$scope.active_name = "home";
@@ -78,7 +78,7 @@ app.controller('main_ctrl', function($scope, $location){
 		}
 	];
 
-	if( localStorage.cardnum ){
+	if( !localStorage.cardnum ){
 		get_personal_info();
 	}
 
@@ -104,63 +104,10 @@ app.controller('main_ctrl', function($scope, $location){
 				"uuid": uuid
 			}
 		}).success( function(data){
-			localStorage.cardnum = JSON.stringify(data.content.cardnum);
+			localStorage.cardnum = data.content.cardnum;
 		});
 	}
 });
-
-// app.controller('top_nav_ctrl', function($scope){
-// 	$scope.close_click = function(){
-// 		console.log("close main window");
-// 		ipc.send('closeMainWindow');
-// 	}
-// });
-
-// app.controller('side_nav_ctrl', function($scope, $location){
-	
-// 	$location.path("home");
-// 	$scope.active_name = "home";
-// 	$scope.items = [{
-// 			"name_en": "home",
-// 			"name_zh": "主页"
-// 		},
-// 		{
-// 			"name_en": "huodong",
-// 			"name_zh": "活动"
-// 		},{
-// 			"name_en": "gpa",
-// 			"name_zh": "绩点"
-// 		},{
-// 			"name_en": "srtp",
-// 			"name_zh": "SRTP"
-// 		},{
-// 			"name_en": "lecture",
-// 			"name_zh": "人文讲座"
-// 		},{
-// 			"name_en": "card",
-// 			"name_zh": "一卡通余额"
-// 		},{
-// 			"name_en": "library",
-// 			"name_zh": "图书馆"
-// 		},{
-// 			"name_en": "jwc",
-// 			"name_zh": "教务处"
-// 		},{
-// 			"name_en": "schoolbus",
-// 			"name_zh": "校车"
-// 		},{
-// 			"name_en": "phylab",
-// 			"name_zh": "物理实验课程"
-// 		},{
-// 			"name_en": "exam",
-// 			"name_zh": "考试安排"
-// 		}
-// 	];
-
-// 	$scope.change_item = function(index){
-// 		$scope.active_name = $scope.items[index].name_en;
-// 	}
-// });
 
 app.controller('home_ctrl', function($scope, $http){
 
@@ -440,11 +387,14 @@ app.controller('srtp_ctrl', function($scope, $http){
 app.controller('lecture_ctrl', function($scope, $http){
 	
 	set_lecture();
+	set_lecture_notice();
 
 	$scope.$on("refresh", function(){
 		console.log("lecture  refresh");
 		$scope.loading = true;
+		$scope.notice_loading = true;
 		get_lecture();
+		get_lecture_notice();
 	});
 
 	function set_lecture(){
@@ -461,6 +411,20 @@ app.controller('lecture_ctrl', function($scope, $http){
 		get_lecture();
 	}
 
+	function set_lecture_notice(){
+		if( localStorage.lecture_notice ){
+			var lecture_notice = JSON.parse( localStorage.lecture_notice );
+			if( new Date().getTime() < lecture_notice.expires){
+				$scope.notice_content = lecture_notice.content;
+				console.log("没过期");
+				return 0;
+			}
+		}
+
+		$scope.notice_loading = true;
+		get_lecture_notice();
+	}
+
 	function get_lecture(){
 		$http({
 			method:'post', 
@@ -473,6 +437,21 @@ app.controller('lecture_ctrl', function($scope, $http){
 			$scope.loading = false;
 			data.expires = new Date().getTime() + 360000;
 			localStorage.lecture = JSON.stringify( data );
+		});
+	}
+
+	function get_lecture_notice(){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/wechat2/lecture',
+			data:{
+				"uuid": uuid
+			}
+		}).success( function(data){
+			$scope.notice_content = data.content;
+			$scope.notice_loading = false;
+			data.expires = new Date().getTime() + 360000;
+			localStorage.lecture_notice = JSON.stringify( data );
 		});
 	}
 });
@@ -656,7 +635,9 @@ app.controller('exam_ctrl', function($scope, $http){
 
 app.controller('library_ctrl', function($scope, $http){
 	
+	$scope.input = {};
 	set_library();
+
 	$scope.$on("refresh", function(){
 		console.log("library  refresh");
 		$scope.loading = true;
@@ -692,4 +673,31 @@ app.controller('library_ctrl', function($scope, $http){
 		});
 	}
 
+	$scope.search_click = function(){
+		$scope.search_loading = true;
+		var keyword = $scope.input.keyword;
+		if(keyword == "")
+			return;
+		get_search_book(keyword);
+	}
+
+	function get_search_book(keyword){
+		$http({
+			method:'post', 
+			url:'http://www.heraldstudio.com/api/search',
+			data:{
+				"uuid": uuid,
+				"book": keyword
+			}
+		}).success( function(data){
+			$scope.search_content = data.content;
+			$scope.search_loading = false;
+		});
+	}
+
+	$scope.key_down = function(e){
+		if(e.keyCode == 13){
+			$scope.search_click();
+		}
+	}
 })
