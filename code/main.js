@@ -146,3 +146,11 @@ ipc.on('backToLoginWindow', function(){
   createLoginWindow();
   mainWindow.close();
 })
+
+ipc.on('miniMainWindow', function(){
+  mainWindow.minimize();
+})
+
+ipc.on('maxMainWindow', function(){
+  mainWindow.maximize();
+})

@@ -1,5 +1,6 @@
 const ipc = require('electron').ipcRenderer;
 const remote = require('electron').remote;
+// const shell = require('electron').shell;
 
 var app = angular.module('app',['ngMaterial', 'ui.router', 'ngAnimate']);
 var uuid = localStorage.uuid;
@@ -89,6 +90,14 @@ app.controller('main_ctrl', function($scope, $http, $location){
 	$scope.close_click = function(){
 		console.log("close main window");
 		ipc.send('closeMainWindow');
+	}
+
+	$scope.mini_click = function(){
+		ipc.send('miniMainWindow');
+	}
+
+	$scope.max_click = function(){
+		ipc.send('maxMainWindow');
 	}
 
 	$scope.refresh_click = function(){

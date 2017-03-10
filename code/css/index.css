@@ -30,6 +30,32 @@ body, html{
 	-webkit-app-region: no-drag;
 }
 
+.close-button>img{
+	margin-left: 5px;
+	vertical-align: bottom;
+}
+
+.close-button:hover{
+	background-color: #e84351;
+}
+
+.mini-button{
+	width: 30px;
+	height: 40px;
+	line-height: 35px;
+	outline: none;
+	text-align: center;
+	-webkit-app-region: no-drag;
+}
+
+.mini-button>img{
+	vertical-align: bottom;
+}
+
+.mini-button:hover{
+	background-color: rgba(255,255,255,.4);
+}
+
 .refresh-button{
 	width: 40px;
 	height: 40px;
@@ -49,14 +75,6 @@ body, html{
 	vertical-align: middle;
 }
 
-.close-button>img{
-	margin-left: 5px;
-	vertical-align: bottom;
-}
-
-.close-button:hover{
-	background-color: #e84351;
-}
 
 .brand-pic img{
 	display: block;
@@ -130,12 +148,12 @@ body, html{
 .content-area::-webkit-scrollbar-thumb{
     border-radius: 10px;
     box-shadow: 0 0 6px rgba(0,0,0,.3);
-    background-color: #555;
+    background-color: #888;
 
 }
 
 .content-area::-webkit-scrollbar-thumb:hover{
-	background-color: #888;
+	background-color: #666;
 }
 
 .content-container{
