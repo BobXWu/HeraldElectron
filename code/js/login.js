@@ -1,4 +1,4 @@
-const ipc = require('electron').ipcRenderer;
+// const ipc = require('electron').ipcRenderer;
 
 var login_app = angular.module("login_app", ["ngMaterial", "ngMessages"])
 
@@ -58,7 +58,7 @@ login_app.controller("login_ctrl", function($scope, $http, $window, $mdToast){
 		$mdToast.show(
 			$mdToast.simple()
 				.textContent(text)
-				.position( "top" )
+				.position( "bottom" )
 				.hideDelay(1500)
 		);
 	};

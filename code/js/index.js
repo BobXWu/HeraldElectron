@@ -1,9 +1,10 @@
-const ipc = require('electron').ipcRenderer;
-const remote = require('electron').remote;
+// const ipc = require('electron').ipcRenderer;
+// const remote = require('electron').remote;
 // const shell = require('electron').shell;
 
 var app = angular.module('app',['ngMaterial', 'ui.router', 'ngAnimate']);
 var uuid = localStorage.uuid;
+var memory_cache = {};
 
 app.config(function($httpProvider){  
 
@@ -26,18 +27,12 @@ app.config(function($stateProvider){
 	.state('main', {
 		url: '/:name',
 		templateUrl: function($stateParams){
-			// if ($stateParams.name==""){
-				// return "content/home.html";
-			// }
-			// else{
-				console.log("$stateParams.name: "+$stateParams.name);
-				return 'content/' + $stateParams.name + '.html';
-			
+			return 'content/' + $stateParams.name + '.html';
 		}
 	});
 });
 
-app.controller('main_ctrl', function($scope, $http, $location){
+app.controller('main_ctrl', function($scope, $http, $location, $mdToast){
 
 	$location.path("home");
 	$scope.active_name = "home";
@@ -105,6 +100,15 @@ app.controller('main_ctrl', function($scope, $http, $location){
 		$scope.$broadcast('refresh');
 	}
 
+	$scope.$on('refresh_failed', function(){
+		$mdToast.show(
+			$mdToast.simple()
+				.textContent("刷新失败")
+				.position( "bottom" )
+				.hideDelay(150000)
+		);
+	})
+
 	function get_personal_info(){
 		$http({
 			method:'post', 
@@ -132,31 +136,25 @@ app.controller('home_ctrl', function($scope, $http){
 	});
 
 	function set_pe(){
-		if(localStorage.pe){
-			var pe = JSON.parse( localStorage.pe );
-			if( new Date().getTime() < pe.expires){
-				$scope.pe = pe;
-				console.log("没过期");
-				return 0;
-			}
+		if( memory_cache.pe ){
+			$scope.pe = memory_cache.pe;
 		}
-		console.log("过期");
-		$scope.pe_loading = true;
-		get_pe();
+		else{
+			$scope.pe_loading = true;
+			get_pe();
+		}
+
 	}
 
 	function set_nic(){
-		if(localStorage.nic){
-			var nic = JSON.parse( localStorage.nic );
-			if( new Date().getTime() < nic.expires){
-				$scope.nic = nic.content;
-				console.log("没过期");
-				return 0;
-			}
+		if( memory_cache.nic ){
+			$scope.nic = memory_cache.nic;
 		}
-		console.log("过期");
-		$scope.nic_loading = true;
-		get_nic();
+		else{
+			$scope.nic_loading = true;
+			get_nic();	
+		}
+
 	}
 
 	function get_pe(){
@@ -169,14 +167,22 @@ app.controller('home_ctrl', function($scope, $http){
 		}).success( function(data){
 			$scope.pe = data;
 			$scope.pe_loading = false;
-			data.expires = new Date().getTime() + 3600000;
+			memory_cache.pe = data;
 			localStorage.pe = JSON.stringify(data);
-			console.log( data );
 		}).error( function(data, status){
-			console.log(status);
-			if( status == "401" ){
-				// showDialog("您似乎已经修改过密码，请重新登录");
+			if( memory_cache.pe ){
+				console.log("error memory_cache");
+				$scope.pe = memory_cache.pe;
 			}
+			else if( localStorage.pe ){
+				console.log("error localStorage");
+				var pe = JSON.parse( localStorage.pe );
+				$scope.pe = pe;
+				memory_cache.pe = pe;
+			}
+
+			$scope.pe_loading = false;
+			$scope.$emit('refresh_failed');
 		});
 	}
 
@@ -190,13 +196,22 @@ app.controller('home_ctrl', function($scope, $http){
 		}).success( function(data){
 			$scope.nic = data.content;
 			$scope.nic_loading = false;
-			data.expires = new Date().getTime() + 3600000;
-			localStorage.nic = JSON.stringify(data);
+			memory_cache.nic = data;
+			localStorage.nic = JSON.stringify( data );
 		}).error( function(data, status){
-			console.log(status);
-			if( status == "401"){
-				// showDialog("您似乎已经修改过密码，请重新登录");
+			if( memory_cache.nic ){
+				console.log("error memory_cache");
+				$scope.nic = memory_cache.nic.content;
 			}
+			else if( localStorage.nic ){
+				console.log("error localStorage");
+				var nic = JSON.parse( localStorage.nic );
+				$scope.nic = nic.content;
+				memory_cache.nic = nic;
+			}
+
+			$scope.nic_loading = false;
+			$scope.$emit('refresh_failed');
 		});
 	}
 
@@ -218,25 +233,25 @@ app.controller('huodong_ctrl', function($scope, $http, $timeout){
 	
 	set_huodong();
 	$scope.$on("refresh", function(){
-		console.log("huodong  refresh");
 		$scope.loading = true;
 		get_huodong();
 	});
 
 	function set_huodong(){
-		if( localStorage.huodong ){
-			var huodong = JSON.parse( localStorage.huodong );
-			if( new Date().getTime() < huodong.expires){
-				$scope.content = huodong.content;
-				console.log( $scope.content );
-				console.log("没过期");
-				return 0;
-			}
+		if( memory_cache.huodong ){
+			console.log("memory_cache");
+			$scope.content = memory_cache.huodong.content;
 		}
-
-		console.log("过期");
-		$scope.loading = true;
-		get_huodong();
+		else if( localStorage.huodong ){
+			console.log("localStorage");
+			var huodong = JSON.parse( localStorage.huodong );
+			$scope.content = huodong.content;
+			memory_cache.huodong = huodong;
+		}else{
+			console.log("request");
+			$scope.loading = true;
+			get_huodong();
+		}
 	}
 
 	function get_huodong(){
@@ -244,21 +259,38 @@ app.controller('huodong_ctrl', function($scope, $http, $timeout){
 			method:'get', 
 			url: 'http://www.heraldstudio.com/herald/api/v1/huodong/get'
 		}).success( function(data){
-			$scope.content = data.content;
-
+			
 			for( var i in data.content ){
 				if( if_limited(data.content[i].pic_url) ){
 					data.content[i].pic_url = 'http://read.html5.qq.com/image?src=forum&q=5&r=0&imgflag=7&imageUrl='
 												+ data.content[i].pic_url;
 				}
 			}
-
+			$scope.content = data.content;
+			
 			$timeout(function () {
 				$scope.loading = false;
-				}, 100);
-			
-			data.expires = new Date().getTime() + 3600000;
+			}, 500);
+
+			memory_cache.huodong = data;
 			localStorage.huodong = JSON.stringify( data );
+		}).error( function(data, status){
+			if( memory_cache.huodong ){
+				console.log("error memory_cache");
+				$scope.content = memory_cache.huodong.content;
+			}
+			else if( localStorage.huodong ){
+				console.log("error localStorage");
+				var huodong = JSON.parse( localStorage.huodong );
+				$scope.content = huodong.content;
+				memory_cache.huodong = huodong;
+			}
+
+			$timeout(function () {
+					$scope.loading = false;
+			}, 500);
+
+			$scope.$emit('refresh_failed');
 		});
 	}
 
@@ -272,7 +304,6 @@ app.controller('huodong_ctrl', function($scope, $http, $timeout){
 		ipc.send('createPageWindow');
 	}
 	
-
 });
 
 app.controller('phylab_ctrl', function($scope, $http){
@@ -280,23 +311,22 @@ app.controller('phylab_ctrl', function($scope, $http){
 	set_phylab();
 
 	$scope.$on("refresh", function(){
-		console.log("phylab  refresh");
 		$scope.loading = true;
 		get_phylab();
 	});
 
-	function set_phylab(){
-		if(localStorage.phylab){
-			var phylab = JSON.parse( localStorage.phylab );
-			if( new Date().getTime() < phylab.expires){
-				$scope.content = phylab.content;
-				console.log("没过期");
-				return 0;
-			}
-		}
 
-		$scope.loading = true;
-		get_phylab();
+	function set_phylab(){
+		if( memory_cache.phylab ){
+			$scope.content = memory_cache.phylab.content;
+		}
+		else if( localStorage.phylab ){
+			var phylab = JSON.parse( localStorage.phylab );
+			$scope.content = phylab.content;
+		}else{
+			$scope.loading = true;	
+			get_phylab();
+		}
 	}
 
 
@@ -310,8 +340,21 @@ app.controller('phylab_ctrl', function($scope, $http){
 		}).success( function(data){
 			$scope.content = data.content;
 			$scope.loading = false;
-			data.expires = new Date().getTime() + 86400000;
 			localStorage.phylab = JSON.stringify( data );
+		}).error( function(data, status){
+			if( memory_cache.phylab ){
+				console.log("error memory_cache");
+				$scope.content = memory_cache.phylab.content;
+			}
+			else if( localStorage.phylab ){
+				console.log("error localStorage");
+				var phylab = JSON.parse( localStorage.phylab );
+				$scope.content = phylab.content;
+				memory_cache.phylab = phylab;
+			}
+
+			$scope.loading = false;
+			$scope.$emit('refresh_failed');
 		});
 	}
 
@@ -328,18 +371,12 @@ app.controller('jwc_ctrl', function($scope, $http){
 	});
 
 	function set_jwc(){
-		if(localStorage.jwc){
-			var jwc = JSON.parse( localStorage.jwc );
-			if( new Date().getTime() < jwc.expires){
-				$scope.content = jwc.content;
-				console.log("没过期");
-				return 0;
-			}
+		if( memory_cache.jwc ){
+			$scope.content = memory_cache.jwc.content;
+		}else{
+			$scope.loading = true;	
+			get_jwc();
 		}
-
-		$scope.loading = true;
-		get_jwc();
-
 	}
 
 	function get_jwc(){
@@ -353,8 +390,21 @@ app.controller('jwc_ctrl', function($scope, $http){
 			
 			$scope.content = data.content;
 			$scope.loading = false;
-			data.expires = new Date().getTime() + 3600000;
 			localStorage.jwc = JSON.stringify(data);
+		}).error( function(data, status){
+			if( memory_cache.jwc ){
+				console.log("error memory_cache");
+				$scope.content = memory_cache.jwc.content;
+			}
+			else if( localStorage.jwc ){
+				console.log("error localStorage");
+				var jwc = JSON.parse( localStorage.jwc );
+				$scope.content = jwc.content;
+				memory_cache.jwc = jwc;
+			}
+
+			$scope.loading = false;
+			$scope.$emit('refresh_failed');
 		});
 	}
 
@@ -370,24 +420,24 @@ app.controller('srtp_ctrl', function($scope, $http){
 	set_srtp();
 
 	$scope.$on("refresh", function(){
-		console.log("srtp  refresh");
 		$scope.loading = true;
 		get_srtp();
 	});
 
 	function set_srtp(){
+		if( memory_cache.srtp ){
+			$scope.srtp = memory_cache.srtp.content;
+			$scope.srtp = memory_cache.srtp.main_info;
+		}
 		if(localStorage.srtp){
 			var srtp = JSON.parse( localStorage.srtp );
-			if( new Date().getTime() < srtp.expires){
-				$scope.content = srtp.content;
-				$scope.main_info = srtp.main_info;
-				console.log("没过期");
-				return 0;
-			}
+			memory_cache.srtp = srtp;
+			$scope.content = srtp.content;
+			$scope.main_info = srtp.main_info;
+		}else{
+			$scope.loading = true;
+			get_srtp();
 		}
-
-		$scope.loading = true;
-		get_srtp();
 	}
 
 	function get_srtp(){
@@ -403,8 +453,24 @@ app.controller('srtp_ctrl', function($scope, $http){
 			$scope.content = data.content;
 			$scope.loading = false;
 			
-			data.expires = new Date().getTime() + 86400000;
+			// data.expires = new Date().getTime() + 86400000;
+			memory_cache.srtp = data;
 			localStorage.srtp = JSON.stringify(data);
+		}).error(function(data, status){
+			if( memory_cache.srtp ){
+				console.log("error memory_cache");
+				$scope.content = memory_cache.srtp.content;
+			}
+			else if( localStorage.srtp ){
+				console.log("error localStorage");
+				var srtp = JSON.parse( localStorage.srtp );
+				$scope.content = srtp.content;
+				memory_cache.srtp = srtp;
+			}
+
+			$scope.loading = false;
+			$scope.$emit('refresh_failed');
+
 		});
 	}
 });
@@ -423,31 +489,27 @@ app.controller('lecture_ctrl', function($scope, $http){
 	});
 
 	function set_lecture(){
-		if( localStorage.lecture ){
-			var lecture = JSON.parse( localStorage.lecture );
-			if( new Date().getTime() < lecture.expires){
-				$scope.content = lecture.content.detial;
-				console.log("没过期");
-				return 0;
-			}
+		if( memory_cache.lecture ){
+			$scope.content = memory_cache.lecture.content.detial;
 		}
-
-		$scope.loading = true;
-		get_lecture();
+		else if( localStorage.lecture ){
+			var lecture = JSON.parse( localStorage.lecture );
+			$scope.content = lecture.content.detial;
+			memory_cache.lecture = lecture;
+		}else{
+			$scope.loading = true;
+			get_lecture();	
+		}
 	}
 
 	function set_lecture_notice(){
-		if( localStorage.lecture_notice ){
-			var lecture_notice = JSON.parse( localStorage.lecture_notice );
-			if( new Date().getTime() < lecture_notice.expires){
-				$scope.notice_content = lecture_notice.content;
-				console.log("没过期");
-				return 0;
-			}
+		if( memory_cache.lecture_notice ){
+			$scope.notice_content = memory_cache.lecture_notice.content.detial;
+		}else{
+			$scope.notice_loading = true;
+			get_lecture_notice();
 		}
 
-		$scope.notice_loading = true;
-		get_lecture_notice();
 	}
 
 	function get_lecture(){
@@ -460,8 +522,21 @@ app.controller('lecture_ctrl', function($scope, $http){
 		}).success( function(data){
 			$scope.content = data.content.detial;
 			$scope.loading = false;
-			data.expires = new Date().getTime() + 360000;
+			memory_cache.lecture = data;
 			localStorage.lecture = JSON.stringify( data );
+		}).error(function(data, status){
+			if( memory_cache.lecture ){
+				console.log("error memory_cache");
+				$scope.content = memory_cache.lecture.content.detial;
+			}
+			else if( localStorage.lecture ){
+				console.log("error localStorage");
+				var lecture = JSON.parse( localStorage.lecture );
+				$scope.content = lecture.content.detial;
+				memory_cache.lecture = lecture;
+			}
+			$scope.loading = false;
+			$scope.$emit('refresh_failed');
 		});
 	}
 
@@ -475,8 +550,22 @@ app.controller('lecture_ctrl', function($scope, $http){
 		}).success( function(data){
 			$scope.notice_content = data.content;
 			$scope.notice_loading = false;
-			data.expires = new Date().getTime() + 360000;
+			memory_cache.lecture_notice = data;
 			localStorage.lecture_notice = JSON.stringify( data );
+		}).error(function(data, status){
+			if( memory_cache.lecture_notice ){
+				console.log("error memory_cache");
+				$scope.content = memory_cache.lecture_notice.content;
+			}
+			else if( localStorage.lecture_notice ){
+				console.log("error localStorage");
+				var lecture_notice = JSON.parse( localStorage.lecture_notice );
+				$scope.content = lecture_notice.content;
+				memory_cache.lecture_notice = lecture_notice;
+			}
+
+			$scope.notice_loading = false;
+			$scope.$emit('refresh_failed');
 		});
 	}
 });
@@ -486,23 +575,22 @@ app.controller('gpa_ctrl', function($scope, $http){
 	set_gpa();
 
 	$scope.$on("refresh", function(){
-		console.log("gpa  refresh");
 		$scope.loading = true;
 		get_gpa();
 	});
 
 	function set_gpa(){
+		if( memory_cache.gpa ){
+			$scope.content = memory_cache.gpa.content;
+		}
 		if( localStorage.gpa ){
 			var gpa = JSON.parse( localStorage.gpa );
-			if( new Date().getTime() < gpa.expires){
-				$scope.content = gpa.content;
-				console.log("没过期");
-				return 0;
-			}
+			$scope.content = gpa.content;
+			memory_cache.gpa = gpa;
+		}else{
+			$scope.loading = true;
+			get_gpa();	
 		}
-
-		$scope.loading = true;
-		get_gpa();	
 	}
 
 	function get_gpa(){
@@ -527,11 +615,25 @@ app.controller('gpa_ctrl', function($scope, $http){
 			$scope.loading = false;
 			var tmp ={
 					"content": content,
-					"main_info": $scope.main_info,
-					"expires": new Date().getTime() + 86400000
+					"main_info": $scope.main_info
 			};
 
+			memory_cache.gpa = tmp;
 			localStorage.gpa = JSON.stringify( tmp );
+		}).error(function(data, status){
+			if( memory_cache.gpa ){
+				console.log("error memory_cache");
+				$scope.content = memory_cache.gpa.content;
+			}
+			else if( localStorage.gpa ){
+				console.log("error localStorage");
+				var gpa = JSON.parse( localStorage.gpa );
+				$scope.content = gpa.content;
+				memory_cache.gpa = gpa;
+			}
+
+			$scope.loading = false;
+			$scope.$emit('refresh_failed');
 		});
 	}
 });
@@ -548,17 +650,14 @@ app.controller('card_ctrl', function($scope, $http){
 	});
 
 	function set_card(){
-		if( localStorage.card ){
-			var card = JSON.parse( localStorage.card );
-			if( new Date().getTime() < card.expires){
-				$scope.content = card.content;
-				console.log("没过期");
-				return 0;
-			}
+		if( memory_cache.card ){
+			$scope.content = memory_cache.card.content;
+		}
+		else{
+			$scope.loading = true;
+			get_card();	
 		}
 
-		$scope.loading = true;
-		get_card();	
 	}
 
 	function get_card(){
@@ -571,13 +670,25 @@ app.controller('card_ctrl', function($scope, $http){
 		}).success( function(data){
 			$scope.content = data.content;
 			$scope.loading = false;
-			data.expires = new Date().getTime() + 3600000;
+			memory_cache.card = data;
 			localStorage.card = JSON.stringify( data );
+		}).error(function(data, status){
+			if( memory_cache.card ){
+				console.log("error memory_cache");
+				$scope.content = memory_cache.card.content;
+			}
+			else if( localStorage.card ){
+				console.log("error localStorage");
+				var card = JSON.parse( localStorage.card );
+				$scope.content = card.content;
+				memory_cache.card = card;
+			}
+
+			$scope.loading = false;
+			$scope.$emit('refresh_failed');
 		});
 	}
 });
-
-
 
 app.controller('schoolbus_ctrl', function($scope, $http){
 	
@@ -590,17 +701,19 @@ app.controller('schoolbus_ctrl', function($scope, $http){
 	});
 
 	function set_schoolbus(){
-		if( localStorage.schoolbus ){
+		if( memory_cache.schoolbus ){
+			$scope.content = memory_cache.schoolbus.content;
+		}
+		else if( localStorage.schoolbus ){
 			var schoolbus = JSON.parse( localStorage.schoolbus );
-			if( new Date().getTime() < schoolbus.expires){
-				$scope.content = schoolbus.content;
-				console.log("没过期");
-				return 0;
-			}
+			memory_cache.schoolbus = schoolbus;
+			$scope.content = schoolbus.content;
+		}else{
+			$scope.loading = true;
+			get_schoolbus();	
 		}
 
-		$scope.loading = true;
-		get_schoolbus();	
+
 	}
 
 	function get_schoolbus(){
@@ -613,8 +726,22 @@ app.controller('schoolbus_ctrl', function($scope, $http){
 		}).success( function(data){
 			$scope.content = data.content;
 			$scope.loading = false;
-			data.expires = new Date().getTime() + 2592000000;
+			memory_cache.schoolbus = data;
 			localStorage.schoolbus = JSON.stringify( data );
+		}).error(function(data, status){
+			if( memory_cache.schoolbus ){
+				console.log("error memory_cache");
+				$scope.content = memory_cache.schoolbus.content;
+			}
+			else if( localStorage.schoolbus ){
+				console.log("error localStorage");
+				var schoolbus = JSON.parse( localStorage.schoolbus );
+				$scope.content = schoolbus.content;
+				memory_cache.schoolbus = schoolbus;
+			}
+
+			$scope.loading = false;
+			$scope.$emit('refresh_failed');
 		});
 	}
 });
@@ -629,17 +756,17 @@ app.controller('exam_ctrl', function($scope, $http){
 	});
 
 	function set_exam(){
-		if( localStorage.exam ){
-			var exam = JSON.parse( localStorage.exam );
-			if( new Date().getTime() < exam.expires){
-				$scope.content = exam.content;
-				console.log("没过期");
-				return 0;
-			}
+		if( memory_cache.exam ){
+			$scope.content = memory_cache.exam.content;
 		}
-
-		$scope.loading = true;
-		get_exam();
+		else if( localStorage.exam ){
+			var exam = JSON.parse( localStorage.exam );
+			$scope.content = exam.content;
+		}
+		else{
+			$scope.loading = true;
+			get_exam();
+		}
 	}
 
 	function get_exam(){
@@ -652,8 +779,22 @@ app.controller('exam_ctrl', function($scope, $http){
 		}).success( function(data){
 			$scope.content = data.content;
 			$scope.loading = false;
-			data.expires = new Date().getTime() + 2592000000;
+			memory_cache.exam = data;
 			localStorage.exam = JSON.stringify( data );
+		}).error( function(data, status){
+			if( memory_cache.exam ){
+				console.log("error memory_cache");
+				$scope.content = memory_cache.exam.content;
+			}
+			else if( localStorage.exam ){
+				console.log("error localStorage");
+				var exam = JSON.parse( localStorage.exam );
+				$scope.content = exam.content;
+				memory_cache.exam = exam;
+			}
+
+			$scope.loading = false;
+			$scope.$emit('refresh_failed');
 		});
 	}
 });
@@ -670,17 +811,19 @@ app.controller('library_ctrl', function($scope, $http){
 	});
 
 	function set_library(){
-		if( localStorage.library ){
+		if( memory_cache.library ){
+			$scope.content = memory_cache.library.content
+		}
+		else if( localStorage.library ){
 			var library = JSON.parse( localStorage.library );
-			if( new Date().getTime() < library.expires){
-				$scope.content = library.content;
-				console.log("没过期");
-				return 0;
-			}
+			memory_cache.library = library;
+			$scope.content = library.content;
+		}
+		else{
+			$scope.loading = true;
+			get_library();
 		}
 
-		$scope.loading = true;
-		get_library();
 	}
 
 	function get_library(){
@@ -695,6 +838,20 @@ app.controller('library_ctrl', function($scope, $http){
 			$scope.loading = false;
 			data.expires = new Date().getTime() + 3600000;
 			localStorage.library = JSON.stringify( data );
+		}).error( function(data, status){
+			if( memory_cache.library ){
+				console.log("error memory_cache");
+				$scope.content = memory_cache.library.content;
+			}
+			else if( localStorage.library ){
+				console.log("error localStorage");
+				var library = JSON.parse( localStorage.library );
+				$scope.content = library.content;
+				memory_cache.library = library;
+			}
+
+			$scope.loading = false;
+			$scope.$emit('refresh_failed');
 		});
 	}
 

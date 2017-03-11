@@ -24,9 +24,3 @@
 15. 连接和断开seu-wlan
 
 	配合移动端扫描二维码登录
-
-##组员分工
-<table>
-<tr><td>吴小宝</td><td>负责前端</td></tr>
-<tr><td>马筱 王海丰</td><td>负责UI设计</td></tr>
-</table>
