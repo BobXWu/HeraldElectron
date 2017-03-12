@@ -22,10 +22,10 @@ function createLoginWindow(){
     height: 450,
     show: false,
     frame: false,
-    resizable: true})
+    resizable: false})
 
   loginWindow.loadURL(`file://${__dirname}/html/login.html`)
-  loginWindow.webContents.openDevTools()
+  // loginWindow.webContents.openDevTools()
  
   var template = []
 
@@ -55,7 +55,7 @@ function createMainWindow () {
   mainWindow.loadURL(`file://${__dirname}/html/index.html`)
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

@@ -1,5 +1,5 @@
-// const ipc = require('electron').ipcRenderer;
-// const remote = require('electron').remote;
+const ipc = require('electron').ipcRenderer;
+const remote = require('electron').remote;
 // const shell = require('electron').shell;
 
 var app = angular.module('app',['ngMaterial', 'ui.router', 'ngAnimate']);
@@ -96,7 +96,7 @@ app.controller('main_ctrl', function($scope, $http, $location, $mdToast){
 	}
 
 	$scope.refresh_click = function(){
-		console.log("refresh_click");
+		// console.log("refresh_click");
 		$scope.$broadcast('refresh');
 	}
 
@@ -104,8 +104,8 @@ app.controller('main_ctrl', function($scope, $http, $location, $mdToast){
 		$mdToast.show(
 			$mdToast.simple()
 				.textContent("刷新失败")
-				.position( "bottom" )
-				.hideDelay(150000)
+				.position( "top" )
+				.hideDelay(2000)
 		);
 	})
 

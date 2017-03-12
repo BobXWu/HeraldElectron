@@ -1,4 +1,4 @@
-// const ipc = require('electron').ipcRenderer;
+const ipc = require('electron').ipcRenderer;
 
 var login_app = angular.module("login_app", ["ngMaterial", "ngMessages"])
 

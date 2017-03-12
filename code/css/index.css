@@ -276,3 +276,10 @@ md-card-content
 	margin: 0;
 	float: right;
 }
+
+md-toast{
+	width: 30%;
+	max-width: 250px;
+	left: 50%;
+	margin-left: -15%;
+}
