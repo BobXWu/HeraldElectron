@@ -176,7 +176,7 @@ body, html{
 }
 
 .md-list-item-text .left{
-	max-width: 300px;
+	max-width: 400px;
 }
 
 .md-list-item-text .top-font{
@@ -261,7 +261,7 @@ md-card-content .right{
 
 md-card-content
 .search-input-container{
-	width: 80%;
+	width: 90%;
 	max-width: 600px;
 	margin-top: 30px;
 	float: right;

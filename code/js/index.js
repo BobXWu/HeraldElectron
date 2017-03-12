@@ -148,7 +148,7 @@ app.controller('home_ctrl', function($scope, $http){
 
 	function set_nic(){
 		if( memory_cache.nic ){
-			$scope.nic = memory_cache.nic;
+			$scope.nic = memory_cache.nic.content;
 		}
 		else{
 			$scope.nic_loading = true;
