@@ -17,7 +17,7 @@ app.config(function($httpProvider){
    }
 
    $httpProvider.defaults.headers.post = {  
-        'Content-Type': 'application/x-www-form-urlencoded'  
+        'Content-Type': 'application/x-www-form-urlencoded'
    }  
 
 });
@@ -107,6 +107,11 @@ app.controller('main_ctrl', function($scope, $http, $location, $mdToast){
 				.position( "top" )
 				.hideDelay(2000)
 		);
+	})
+
+	$scope.$on('open_url', function(e, url){
+		remote.getGlobal('sharedObject').page_url = url;
+		ipc.send('createPageWindow');
 	})
 
 	function get_personal_info(){
@@ -299,9 +304,7 @@ app.controller('huodong_ctrl', function($scope, $http, $timeout){
 	}
 
 	$scope.open_url = function(url){
-		// require('electron').openExternal(url);
-		remote.getGlobal('sharedObject').page_url = url;
-		ipc.send('createPageWindow');
+		url && $scope.$emit('open_url', url);
 	}
 	
 });
@@ -409,8 +412,7 @@ app.controller('jwc_ctrl', function($scope, $http){
 	}
 
 	$scope.open_url = function(url){
-		remote.getGlobal('sharedObject').page_url = url;
-		ipc.send('createPageWindow');
+		url && $scope.$emit('open_url', url);
 	}
 
 });

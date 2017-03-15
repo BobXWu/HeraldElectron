@@ -55,7 +55,7 @@ function createMainWindow () {
   mainWindow.loadURL(`file://${__dirname}/html/index.html`)
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -96,7 +96,13 @@ function createPageWindow(){
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createLoginWindow)
+app.on('ready', function(){
+    electron.session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+      details.requestHeaders['User-Agent'] = 'Electron v1.0'
+      callback({cancel: false, requestHeaders: details.requestHeaders})
+    })
+    createLoginWindow()
+})
 // app.on('ready', createLoginWindow)
 
 // Quit when all windows are closed.
