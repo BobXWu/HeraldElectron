@@ -1,10 +1,11 @@
-#小猴偷米PC端版
-<br>
+# 小猴偷米PC端版
+---
+
 ##项目说明
 1.	此项目旨在在PC端上实现小猴偷米的各种功能，拓展小猴偷米的使用覆盖范围
 2. 技术方面,此项目用html,css,javascript，AngularJs, Angular Material实现，再用Electron框架打包成windows平台，MacOS平台上客户端程序。后台直接使用heraldstudio的接口。
 
-##需求分析
+## 需求分析
 1. 登录
 	*	用户填写一卡通号和密码，并提供保持登录状态的功能
 2. 注销
